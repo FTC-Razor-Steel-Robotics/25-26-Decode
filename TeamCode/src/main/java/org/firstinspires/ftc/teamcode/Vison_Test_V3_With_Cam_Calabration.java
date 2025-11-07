@@ -6,6 +6,8 @@ import android.graphics.Canvas;
 import android.util.Size;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -38,6 +40,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class Vison_Test_V3_With_Cam_Calabration extends LinearOpMode {
     VisionPortal portal1;
     VisionPortal portal2;
+
 
     AprilTagProcessor aprilTagProcessor1;
     AprilTagProcessor aprilTagProcessor2;
@@ -75,12 +78,14 @@ public class Vison_Test_V3_With_Cam_Calabration extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         int[] viewIds = VisionPortal.makeMultiPortalView(2, VisionPortal.MultiPortalLayout.VERTICAL);
 
         // We extract the two view IDs from the array to make our lives a little easier later.
         // NB: the array is 2 long because we asked for 2 portals up above.
         int portal1ViewId = viewIds[0];
         int portal2ViewId = viewIds[1];
+        //cam Rotated 90 degres off
 
         // If we want to run AprilTag detection on two portals simultaneously,
         // we need to create two distinct instances of the AprilTag processor,
@@ -98,6 +103,7 @@ public class Vison_Test_V3_With_Cam_Calabration extends LinearOpMode {
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
                 .setLiveViewContainerId(portal2ViewId)
                 .addProcessor(processor)
+                .addProcessor(aprilTagProcessor2)
                 .build();
         waitForStart();
 
@@ -110,7 +116,7 @@ public class Vison_Test_V3_With_Cam_Calabration extends LinearOpMode {
     }
     private void telemetryAprilTag() {
 
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        List<AprilTagDetection> currentDetections = aprilTagProcessor2.getDetections();
         telemetry.addData("# AprilTags Detected", currentDetections.size());
 
         // Step through the list of detections and display info for each one.
@@ -174,7 +180,7 @@ public class Vison_Test_V3_With_Cam_Calabration extends LinearOpMode {
         builder.setCameraResolution(new Size(1920, 1080));
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
-        builder.setLiveViewContainerId(1);
+        builder.setLiveViewContainerId(0);
 
         // Set the stream format; MJPEG uses less bandwidth than default YUY2.
         builder.setStreamFormat(VisionPortal.StreamFormat.MJPEG);
