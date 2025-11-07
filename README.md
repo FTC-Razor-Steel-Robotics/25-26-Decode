@@ -1,3 +1,4 @@
-## Razor Steel Robotics Decode 25-26
+# Road Runner Quickstart
 
-Placeholder for game description
+Check out the [docs](https://rr.brott.dev/docs/v1-0/tuning/).
+

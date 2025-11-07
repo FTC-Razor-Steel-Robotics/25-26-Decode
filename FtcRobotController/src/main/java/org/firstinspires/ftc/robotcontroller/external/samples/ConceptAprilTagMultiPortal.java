@@ -58,7 +58,7 @@ public class ConceptAprilTagMultiPortal extends LinearOpMode
         // the SDK that we want it to split the camera monitor area into two smaller
         // areas for us. It will then give us View IDs which we can pass to the individual
         // vision portals to allow them to properly hook into the UI in tandem.
-        int[] viewIds = VisionPortal.makeMultiPortalView(2, VisionPortal.MultiPortalLayout.VERTICAL);
+        int[] viewIds = VisionPortal.makeMultiPortalView(2, VisionPortal.MultiPortalLayout.HORIZONTAL);
 
         // We extract the two view IDs from the array to make our lives a little easier later.
         // NB: the array is 2 long because we asked for 2 portals up above.
@@ -82,7 +82,7 @@ public class ConceptAprilTagMultiPortal extends LinearOpMode
                 .addProcessor(aprilTagProcessor1)
                 .build();
         portal2 = new VisionPortal.Builder()
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 2"))
+                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
                 .setLiveViewContainerId(portal2ViewId)
                 .addProcessor(aprilTagProcessor2)
                 .build();
