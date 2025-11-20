@@ -20,6 +20,7 @@ import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibra
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
@@ -93,6 +94,7 @@ public class Vison_Test_V3_With_Cam_Calabration extends LinearOpMode {
         // options that you have when creating these processors, go check out
         // the ConceptAprilTag OpMode.
         initAprilTag();
+
         aprilTagProcessor2 = AprilTagProcessor.easyCreateWithDefaults();
         final CameraStreamProcessor processor = new CameraStreamProcessor();
 
@@ -103,7 +105,6 @@ public class Vison_Test_V3_With_Cam_Calabration extends LinearOpMode {
                 .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
                 .setLiveViewContainerId(portal2ViewId)
                 .addProcessor(processor)
-                .addProcessor(aprilTagProcessor2)
                 .build();
         waitForStart();
 
@@ -116,7 +117,7 @@ public class Vison_Test_V3_With_Cam_Calabration extends LinearOpMode {
     }
     private void telemetryAprilTag() {
 
-        List<AprilTagDetection> currentDetections = aprilTagProcessor2.getDetections();
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
         telemetry.addData("# AprilTags Detected", currentDetections.size());
 
         // Step through the list of detections and display info for each one.
@@ -139,16 +140,17 @@ public class Vison_Test_V3_With_Cam_Calabration extends LinearOpMode {
 
     }
     private void initAprilTag() {
-
+        int[] viewIds = VisionPortal.makeMultiPortalView(2, VisionPortal.MultiPortalLayout.VERTICAL);
+        int portal1ViewId = viewIds[0];
         // Create the AprilTag processor.
         aprilTag = new AprilTagProcessor.Builder()
 
                 // The following default settings are available to un-comment and edit as needed.
-                .setDrawAxes(true)
-                .setDrawCubeProjection(true)
+                //.setDrawAxes(true)
+                //.setDrawCubeProjection(true)
                 //.setDrawTagOutline(true)
-                //.setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
-                //.setTagLibrary(AprilTagGameDatabase.getCenterStageTagLibrary())
+                .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
+                .setTagLibrary(AprilTagGameDatabase.getDecodeTagLibrary())
                 //.setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
 
                 // == CAMERA CALIBRATION ==
@@ -166,7 +168,7 @@ public class Vison_Test_V3_With_Cam_Calabration extends LinearOpMode {
         // Decimation = 3 ..  Detect 2" Tag from 4  feet away at 30 Frames Per Second (default)
         // Decimation = 3 ..  Detect 5" Tag from 10 feet away at 30 Frames Per Second (default)
         // Note: Decimation can be changed on-the-fly to adapt during a match.
-        //aprilTag.setDecimation(3);
+        aprilTag.setDecimation(3);
 
         // Create the vision portal by using a builder.
         VisionPortal.Builder builder = new VisionPortal.Builder();
@@ -180,7 +182,7 @@ public class Vison_Test_V3_With_Cam_Calabration extends LinearOpMode {
         builder.setCameraResolution(new Size(1920, 1080));
 
         // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
-        builder.setLiveViewContainerId(0);
+        builder.setLiveViewContainerId(portal1ViewId);
 
         // Set the stream format; MJPEG uses less bandwidth than default YUY2.
         builder.setStreamFormat(VisionPortal.StreamFormat.MJPEG);
@@ -194,7 +196,7 @@ public class Vison_Test_V3_With_Cam_Calabration extends LinearOpMode {
         builder.addProcessor(aprilTag);
 
         // Build the Vision Portal, using the above settings.
-
+        visionPortal = builder.build();
 
         // Disable or re-enable the aprilTag processor at any time.
         //visionPortal.setProcessorEnabled(aprilTag, true);
