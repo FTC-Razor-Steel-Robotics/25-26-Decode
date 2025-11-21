@@ -35,6 +35,8 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -42,6 +44,8 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.List;
 
@@ -69,7 +73,7 @@ import java.util.List;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@TeleOp(name = "Concept: AprilTag", group = "Concept")
+@TeleOp(name = "Range_Finder_test", group = "Concept")
 //@Disabled
 public class Range_Finder extends LinearOpMode {
 
@@ -79,6 +83,11 @@ public class Range_Finder extends LinearOpMode {
      * The variable to store our instance of the AprilTag processor.
      */
     private AprilTagProcessor aprilTag;
+    private ElapsedTime runtime = new ElapsedTime();
+    private DcMotor frontLeftDrive = null;
+    private DcMotor backLeftDrive = null;
+    private DcMotor frontRightDrive = null;
+    private DcMotor backRightDrive = null;
 
     /**
      * The variable to store our instance of the vision portal.
@@ -87,6 +96,17 @@ public class Range_Finder extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        frontLeftDrive = hardwareMap.get(DcMotor.class, "FL/LO");
+        backLeftDrive = hardwareMap.get(DcMotor.class, "RL");
+        frontRightDrive = hardwareMap.get(DcMotor.class, "FR/RO");
+        backRightDrive = hardwareMap.get(DcMotor.class, "RR/BO");
+        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
+        backRightDrive.setDirection(DcMotor.Direction.FORWARD);
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        OpenCvWebcam camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         initAprilTag();
@@ -98,12 +118,49 @@ public class Range_Finder extends LinearOpMode {
         waitForStart();
 
         if (opModeIsActive()) {
+            FtcDashboard.getInstance().startCameraStream(camera, 0);
+
             while (opModeIsActive()) {
 
                 telemetryAprilTag();
+                telemetry.addData("Status", "Run Time: " + runtime.toString());
+
 
                 // Push telemetry to the Driver Station.
                 telemetry.update();
+                //drive code
+                double max;
+
+                // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
+                double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+                double lateral =  gamepad1.left_stick_x;
+                double yaw     =  gamepad1.right_stick_x;
+
+                // Combine the joystick requests for each axis-motion to determine each wheel's power.
+                // Set up a variable for each drive wheel to save the power level for telemetry.
+                double frontLeftPower  = axial + lateral + yaw;
+                double frontRightPower = axial - lateral - yaw;
+                double backLeftPower   = axial - lateral + yaw;
+                double backRightPower  = axial + lateral - yaw;
+
+                // Normalize the values so no wheel power exceeds 100%
+                // This ensures that the robot maintains the desired motion.
+                max = Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower));
+                max = Math.max(max, Math.abs(backLeftPower));
+                max = Math.max(max, Math.abs(backRightPower));
+
+                if (max > 1.0) {
+                    frontLeftPower  /= max;
+                    frontRightPower /= max;
+                    backLeftPower   /= max;
+                    backRightPower  /= max;
+                }
+                frontLeftDrive.setPower(frontLeftPower);
+                frontRightDrive.setPower(frontRightPower);
+                backLeftDrive.setPower(backLeftPower);
+                backRightDrive.setPower(backRightPower);
+                telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
+                telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
 
                 // Save CPU resources; can resume streaming when needed.
 
@@ -137,7 +194,7 @@ public class Range_Finder extends LinearOpMode {
             // == CAMERA CALIBRATION ==
             // If you do not manually specify calibration parameters, the SDK will attempt
             // to load a predefined calibration for your camera.
-            .setLensIntrinsics(964.146, 964.146, 637.101, 369.345)
+//            .setLensIntrinsics(964.146, 964.146, 637.101, 369.345)
             // ... these parameters are fx, fy, cx, cy.
 
             .build();
@@ -202,6 +259,7 @@ public class Range_Finder extends LinearOpMode {
                 telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
                 telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
                 telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
+                telemetry.addData("Robot range", detection.ftcPose.range);
             } else {
                 telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
                 telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
