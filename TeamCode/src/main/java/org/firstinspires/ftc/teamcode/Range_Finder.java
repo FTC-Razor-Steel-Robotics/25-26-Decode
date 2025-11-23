@@ -77,39 +77,17 @@ import java.util.List;
 //@Disabled
 public class Range_Finder extends LinearOpMode {
 
-    private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
-
-    /**
-     * The variable to store our instance of the AprilTag processor.
-     */
-    private AprilTagProcessor aprilTag;
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor frontLeftDrive = null;
-    private DcMotor backLeftDrive = null;
-    private DcMotor frontRightDrive = null;
-    private DcMotor backRightDrive = null;
 
-    /**
-     * The variable to store our instance of the vision portal.
-     */
-    private VisionPortal visionPortal;
+    Camera camera = new Camera(hardwareMap);
+    Robot robot = new Robot(hardwareMap, gamepad1, gamepad2);
 
     @Override
     public void runOpMode() {
-        frontLeftDrive = hardwareMap.get(DcMotor.class, "FL/LO");
-        backLeftDrive = hardwareMap.get(DcMotor.class, "RL");
-        frontRightDrive = hardwareMap.get(DcMotor.class, "FR/RO");
-        backRightDrive = hardwareMap.get(DcMotor.class, "RR/BO");
-        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
-        backRightDrive.setDirection(DcMotor.Direction.FORWARD);
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        OpenCvWebcam camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        robot.init();
+        camera.init(true);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
-        initAprilTag();
 
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
@@ -118,7 +96,7 @@ public class Range_Finder extends LinearOpMode {
         waitForStart();
 
         if (opModeIsActive()) {
-            FtcDashboard.getInstance().startCameraStream(camera, 0);
+            camera.startCameraStream();
 
             while (opModeIsActive()) {
 
@@ -128,128 +106,24 @@ public class Range_Finder extends LinearOpMode {
 
                 // Push telemetry to the Driver Station.
                 telemetry.update();
-                //drive code
-                double max;
 
-                // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-                double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-                double lateral =  gamepad1.left_stick_x;
-                double yaw     =  gamepad1.right_stick_x;
-
-                // Combine the joystick requests for each axis-motion to determine each wheel's power.
-                // Set up a variable for each drive wheel to save the power level for telemetry.
-                double frontLeftPower  = axial + lateral + yaw;
-                double frontRightPower = axial - lateral - yaw;
-                double backLeftPower   = axial - lateral + yaw;
-                double backRightPower  = axial + lateral - yaw;
-
-                // Normalize the values so no wheel power exceeds 100%
-                // This ensures that the robot maintains the desired motion.
-                max = Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower));
-                max = Math.max(max, Math.abs(backLeftPower));
-                max = Math.max(max, Math.abs(backRightPower));
-
-                if (max > 1.0) {
-                    frontLeftPower  /= max;
-                    frontRightPower /= max;
-                    backLeftPower   /= max;
-                    backRightPower  /= max;
-                }
-                frontLeftDrive.setPower(frontLeftPower);
-                frontRightDrive.setPower(frontRightPower);
-                backLeftDrive.setPower(backLeftPower);
-                backRightDrive.setPower(backRightPower);
-                telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
-                telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
-
-                // Save CPU resources; can resume streaming when needed.
-
+                robot.driveMotors();
 
                 // Share the CPU.
                 sleep(20);
             }
         }
 
-        // Save more CPU resources when camera is no longer needed.
-        visionPortal.close();
+        camera.stop();
 
     }   // end method runOpMode()
-
-    /**
-     * Initialize the AprilTag processor.
-     */
-    private void initAprilTag() {
-
-        // Create the AprilTag processor.
-        aprilTag = new AprilTagProcessor.Builder()
-
-            // The following default settings are available to un-comment and edit as needed.
-            //.setDrawAxes(false)
-            //.setDrawCubeProjection(false)
-            //.setDrawTagOutline(true)
-            //.setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
-            .setTagLibrary(AprilTagGameDatabase.getDecodeTagLibrary())
-            //.setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
-
-            // == CAMERA CALIBRATION ==
-            // If you do not manually specify calibration parameters, the SDK will attempt
-            // to load a predefined calibration for your camera.
-//            .setLensIntrinsics(964.146, 964.146, 637.101, 369.345)
-            // ... these parameters are fx, fy, cx, cy.
-
-            .build();
-
-        // Adjust Image Decimation to trade-off detection-range for detection-rate.
-        // eg: Some typical detection data using a Logitech C920 WebCam
-        // Decimation = 1 ..  Detect 2" Tag from 10 feet away at 10 Frames per second
-        // Decimation = 2 ..  Detect 2" Tag from 6  feet away at 22 Frames per second
-        // Decimation = 3 ..  Detect 2" Tag from 4  feet away at 30 Frames Per Second (default)
-        // Decimation = 3 ..  Detect 5" Tag from 10 feet away at 30 Frames Per Second (default)
-        // Note: Decimation can be changed on-the-fly to adapt during a match.
-        //aprilTag.setDecimation(3);
-
-        // Create the vision portal by using a builder.
-        VisionPortal.Builder builder = new VisionPortal.Builder();
-
-        // Set the camera (webcam vs. built-in RC phone camera).
-        if (USE_WEBCAM) {
-            builder.setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"));
-        } else {
-            builder.setCamera(BuiltinCameraDirection.BACK);
-        }
-
-        // Choose a camera resolution. Not all cameras support all resolutions.
-        builder.setCameraResolution(new Size(1920, 1080));
-
-        // Enable the RC preview (LiveView).  Set "false" to omit camera monitoring.
-        //builder.enableLiveView(true);
-
-        // Set the stream format; MJPEG uses less bandwidth than default YUY2.
-        builder.setStreamFormat(VisionPortal.StreamFormat.MJPEG);
-
-        // Choose whether or not LiveView stops if no processors are enabled.
-        // If set "true", monitor shows solid orange screen if no processors enabled.
-        // If set "false", monitor shows camera view without annotations.
-        //builder.setAutoStopLiveView(false);
-
-        // Set and enable the processor.
-        builder.addProcessor(aprilTag);
-
-        // Build the Vision Portal, using the above settings.
-        visionPortal = builder.build();
-
-        // Disable or re-enable the aprilTag processor at any time.
-        //visionPortal.setProcessorEnabled(aprilTag, true);
-
-    }   // end method initAprilTag()
-
 
     /**
      * Add telemetry about AprilTag detections.
      */
     private void telemetryAprilTag() {
 
-        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+        List<AprilTagDetection> currentDetections = camera.getDetections();
         telemetry.addData("# AprilTags Detected", currentDetections.size());
 
         // Step through the list of detections and display info for each one.
