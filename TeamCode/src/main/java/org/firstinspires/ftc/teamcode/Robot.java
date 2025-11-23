@@ -5,12 +5,12 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-@Config
+//@Config
 public class Robot {
-	public static String frontLeftDriveString = "FL/LO";
-	public static String backLeftDriveDriveString = "RL";
-	public static String frontRightDriveString = "FR/RO";
-	public static String backRightDriveString = "RR/BO";
+	private String frontLeftDriveString = "FL/LO";
+	private String backLeftDriveDriveString = "RL";
+	private String frontRightDriveString = "FR/RO";
+	private String backRightDriveString = "RR/BO";
 
 	private HardwareMap hardwareMap;
 	private DcMotor frontLeftDrive;
