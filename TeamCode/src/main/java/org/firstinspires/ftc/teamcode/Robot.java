@@ -10,16 +10,33 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @Config
 public class Robot {
-	public static String frontLeftDriveString = "FL/LO";
-	public static String backLeftDriveDriveString = "RL";
-	public static String frontRightDriveString = "FR/RO";
-	public static String backRightDriveString = "RR/BO";
-	public static String shooterString = "Shooter";
-	public static String intakeString = "Intake";
-	public static String triggerString = "Trigger";
+	//Create new classes for our drive motors and intake/shooting motors
+	//This will split them into groups in the dashboard, making it a bit less cluttered
+	//For reference, this is also done in MecanumDrive.java
+	public static class DriveConfig {
+		public String frontLeftDriveString = "FL/LO";
+		public String backLeftDriveDriveString = "RL";
+		public String frontRightDriveString = "FR/RO";
+		public String backRightDriveString = "RR/BO";
+	}
 
-	public static double[] shooterSpeeds = {0.8, 0.75, 0.7};
+	public static class ShooterConfig {
+		public String shooterString = "Shooter";
+		public String intakeString = "Intake";
+		public String triggerString = "Trigger";
+
+		public double[] shooterSpeeds = {0.8, 0.75, 0.7};
+
+		public double triggerUpPos = 1;
+		public double triggerDownPos = 0;
+	}
+
+	//This could go into ShooterConfig, but it's not necessary
 	int shooterSpeedIndex = 0;
+
+	//Create instances of the above classes so that way we can actually use them
+	public static DriveConfig DRIVE_CONFIG = new DriveConfig();
+	public static ShooterConfig SHOOTER_CONFIG = new ShooterConfig();
 
 	private HardwareMap hardwareMap;
 	private Telemetry telemetry;
@@ -28,20 +45,21 @@ public class Robot {
 	private DcMotor backLeftDrive;
 	private DcMotor frontRightDrive;
 	private DcMotor backRightDrive;
+
 	private DcMotor intake;
 	private DcMotor shooter;
-
 	private Servo trigger;
 
 	public Robot(HardwareMap hwMap, Telemetry telem) {
+		//Create copies of the hardware map and telemetry so we can use them throughout the class
 		hardwareMap = hwMap;
 		telemetry = telem;
 
 		//Initialize drive motors
-		frontLeftDrive = hardwareMap.get(DcMotor.class, frontLeftDriveString);
-		backLeftDrive = hardwareMap.get(DcMotor.class, backLeftDriveDriveString);
-		frontRightDrive = hardwareMap.get(DcMotor.class, frontRightDriveString);
-		backRightDrive = hardwareMap.get(DcMotor.class, backRightDriveString);
+		frontLeftDrive = hardwareMap.get(DcMotor.class, DRIVE_CONFIG.frontLeftDriveString);
+		backLeftDrive = hardwareMap.get(DcMotor.class, DRIVE_CONFIG.backLeftDriveDriveString);
+		frontRightDrive = hardwareMap.get(DcMotor.class, DRIVE_CONFIG.frontRightDriveString);
+		backRightDrive = hardwareMap.get(DcMotor.class, DRIVE_CONFIG.backRightDriveString);
 
 		frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
 		backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -54,9 +72,9 @@ public class Robot {
 		backRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 		//Initialize the other motors
-		shooter = hardwareMap.get(DcMotor.class, shooterString);
-		intake = hardwareMap.get(DcMotor.class, intakeString);
-		trigger = hardwareMap.get(Servo.class,triggerString);
+		shooter = hardwareMap.get(DcMotor.class, SHOOTER_CONFIG.shooterString);
+		intake = hardwareMap.get(DcMotor.class, SHOOTER_CONFIG.intakeString);
+		trigger = hardwareMap.get(Servo.class, SHOOTER_CONFIG.triggerString);
 
 		shooter.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -98,18 +116,19 @@ public class Robot {
 	public void spinShooter(boolean spin, boolean toggleSpeed) {
 		//Cycle through the array and go back to 0 if we reach the end
 		if (toggleSpeed) {
-			if (++shooterSpeedIndex >= shooterSpeeds.length)
+			if (++shooterSpeedIndex >= SHOOTER_CONFIG.shooterSpeeds.length)
 				shooterSpeedIndex = 0;
 		}
 
-		double shooterSpeed = shooterSpeeds[shooterSpeedIndex];
+		double shooterSpeed = SHOOTER_CONFIG.shooterSpeeds[shooterSpeedIndex];
 		telemetry.addData("Shooter Speed", shooterSpeed);
 
 		shooter.setPower(spin ? shooterSpeed : 0);
 	}
 
 	public void moveTrigger(boolean up) {
-		double triggerPos = up ? 1 : 0;
+		double triggerPos = up ? SHOOTER_CONFIG.triggerUpPos
+								: SHOOTER_CONFIG.triggerDownPos;
 		telemetry.addData("Trigger Pos", triggerPos);
 
 		trigger.setPosition(triggerPos);
