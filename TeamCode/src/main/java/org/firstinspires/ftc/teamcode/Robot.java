@@ -3,9 +3,10 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @Config
 public class Robot {
@@ -21,16 +22,20 @@ public class Robot {
 	int shooterSpeedIndex = 0;
 
 	private HardwareMap hardwareMap;
+	private Telemetry telemetry;
+
 	private DcMotor frontLeftDrive;
 	private DcMotor backLeftDrive;
 	private DcMotor frontRightDrive;
 	private DcMotor backRightDrive;
 	private DcMotor intake;
 	private DcMotor shooter;
+
 	private Servo trigger;
 
-	public void init(HardwareMap hardwareMap) {
-		this.hardwareMap = hardwareMap;
+	public Robot(HardwareMap hwMap, Telemetry telem) {
+		hardwareMap = hwMap;
+		telemetry = telem;
 
 		//Initialize drive motors
 		frontLeftDrive = hardwareMap.get(DcMotor.class, frontLeftDriveString);
@@ -56,7 +61,7 @@ public class Robot {
 		shooter.setDirection(DcMotorSimple.Direction.REVERSE);
 
 		//Set servo default positions
-		trigger.setPosition(0);
+		moveTrigger(false);
 	}
 
 	public void driveMecanum(double axial, double lateral, double yaw) {
@@ -85,16 +90,34 @@ public class Robot {
 		frontRightDrive.setPower(frontRightPower);
 		backLeftDrive.setPower(backLeftPower);
 		backRightDrive.setPower(backRightPower);
+
+		telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
+		telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
 	}
 
 	public void spinShooter(boolean spin, boolean toggleSpeed) {
+		//Cycle through the array and go back to 0 if we reach the end
 		if (toggleSpeed) {
 			if (++shooterSpeedIndex >= shooterSpeeds.length)
 				shooterSpeedIndex = 0;
 		}
 
 		double shooterSpeed = shooterSpeeds[shooterSpeedIndex];
+		telemetry.addData("Shooter Speed", shooterSpeed);
 
 		shooter.setPower(spin ? shooterSpeed : 0);
+	}
+
+	public void moveTrigger(boolean up) {
+		double triggerPos = up ? 1 : 0;
+		telemetry.addData("Trigger Pos", triggerPos);
+
+		trigger.setPosition(triggerPos);
+	}
+
+	public void setIntakeSpeed(double speed) {
+		telemetry.addData("Intake Speed", speed);
+
+		intake.setPower(speed);
 	}
 }

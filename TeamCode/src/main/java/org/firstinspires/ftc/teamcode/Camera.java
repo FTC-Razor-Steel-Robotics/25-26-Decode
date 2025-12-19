@@ -5,6 +5,7 @@ import android.util.Size;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -29,14 +30,14 @@ public class Camera {
 
 	private AprilTagProcessor aprilTag;
 	private HardwareMap hardwareMap;
+	private Telemetry telemetry;
 	private VisionPortal visionPortal;
 	private OpenCvWebcam openCvWebcam;
 
-	public Camera(HardwareMap hardwareMap) {
-		this.hardwareMap = hardwareMap;
-	}
+	public Camera(HardwareMap hwMap, Telemetry telem, boolean enableDashboardStream) {
+		hardwareMap = hwMap;
+		telemetry = telem;
 
-	public void init(boolean enableDashboardStream) {
 		if (enableDashboardStream) {
 			int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
 			openCvWebcam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -46,14 +47,14 @@ public class Camera {
 				// The following default settings are available to un-comment and edit as needed.
 //				.setDrawAxes(false)
 //				.setDrawCubeProjection(false)
-				.setDrawTagOutline(true)
+//				.setDrawTagOutline(true)
 				.setTagLibrary(AprilTagGameDatabase.getDecodeTagLibrary())
-				.setCameraPose(cameraPosition, cameraOrientation)
-				.setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
+//				.setCameraPose(cameraPosition, cameraOrientation)
+//				.setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
 				.build();
 
 		//TODO: Figure out what this value should be set to initially
-		setDecimation(3);
+//		setDecimation(3);
 
 		// Create the vision portal by using a builder.
 		VisionPortal.Builder builder = new VisionPortal.Builder();

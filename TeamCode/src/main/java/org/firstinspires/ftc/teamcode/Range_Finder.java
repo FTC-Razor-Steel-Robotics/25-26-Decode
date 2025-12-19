@@ -29,23 +29,13 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import android.util.Size;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvWebcam;
 
 import java.util.List;
 
@@ -79,15 +69,15 @@ public class Range_Finder extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
 
-    Camera camera = new Camera(hardwareMap);
-    Robot robot = new Robot(hardwareMap, gamepad1, gamepad2);
+    Camera camera;
+    Robot robot;
 
     @Override
     public void runOpMode() {
-        robot.init();
-        camera.init(true);
+		telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+		robot = new Robot(hardwareMap, telemetry);
+        camera = new Camera(hardwareMap, telemetry, true);
 
         // Wait for the DS start button to be touched.
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
@@ -107,7 +97,7 @@ public class Range_Finder extends LinearOpMode {
                 // Push telemetry to the Driver Station.
                 telemetry.update();
 
-                robot.driveMotors();
+                robot.driveMecanum(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
 
                 // Share the CPU.
                 sleep(20);
