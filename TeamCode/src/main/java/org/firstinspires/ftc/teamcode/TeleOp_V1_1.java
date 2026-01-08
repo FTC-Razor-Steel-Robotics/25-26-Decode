@@ -32,11 +32,9 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -69,9 +67,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="TeleOp_v1", group="Linear OpMode")
+@TeleOp(name="TeleOp_v1.1", group="Linear OpMode")
 @Config
-public class TeleOp_V1 extends LinearOpMode {
+public class TeleOp_V1_1 extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
@@ -115,10 +113,13 @@ public class TeleOp_V1 extends LinearOpMode {
         // Keep testing until ALL the wheels move the robot forward when you push the left joystick forward.
         frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
+        frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
         backRightDrive.setDirection(DcMotor.Direction.REVERSE);
         Shooter.setDirection(DcMotorSimple.Direction.REVERSE);
-
+        frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -126,19 +127,22 @@ public class TeleOp_V1 extends LinearOpMode {
 
         waitForStart();
         runtime.reset();
+        double clock_check;
 
         boolean right_bumper_prev = false;
         double shooterSpeed = shooter_pre_A;
         double speed_contol= 1;
         double powershoot=0;
 
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             double max;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-            double lateral =  gamepad1.left_stick_x;
+            //drive was reversed 12/20/2025
+            double axial   = gamepad1.left_stick_x;  // Note: pushing stick forward gives negative value
+            double lateral =  -gamepad1.left_stick_y;
             double yaw     =  gamepad1.right_stick_x;
 
             if (gamepad1.left_bumper){
@@ -152,8 +156,8 @@ public class TeleOp_V1 extends LinearOpMode {
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
             double frontLeftPower  = (axial + lateral + yaw) * speed_contol;
-            double frontRightPower = (axial - lateral - yaw) * speed_contol;
-            double backLeftPower   = (axial - lateral + yaw) * speed_contol;
+            double frontRightPower = (axial - lateral + yaw) * speed_contol;
+            double backLeftPower   = (axial - lateral - yaw) * speed_contol;
             double backRightPower  = (axial + lateral - yaw) * speed_contol;
 
             // Normalize the values so no wheel power exceeds 100%
@@ -194,11 +198,12 @@ public class TeleOp_V1 extends LinearOpMode {
                 powershoot=0;
             }
 
-            if (gamepad2.right_trigger>.2){
+            if (gamepad2.right_trigger>.2 && gamepad1.right_trigger>.2){
                 Trigger.setPosition(1);
-            }else {
+            }else{
                 Trigger.setPosition(0);
             }
+            //TODO add auto ball cycle
 
             right_bumper_prev = gamepad2.right_bumper;
 

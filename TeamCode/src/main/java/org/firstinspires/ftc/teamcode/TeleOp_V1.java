@@ -68,7 +68,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
-
+@Disabled
 @TeleOp(name="TeleOp_v1", group="Linear OpMode")
 @Config
 public class TeleOp_V1 extends LinearOpMode {
@@ -129,6 +129,8 @@ public class TeleOp_V1 extends LinearOpMode {
 
         boolean right_bumper_prev = false;
         double shooterSpeed = shooter_pre_A;
+        double speed_contol= 1;
+        double powershoot=0;
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -139,12 +141,20 @@ public class TeleOp_V1 extends LinearOpMode {
             double lateral =  gamepad1.left_stick_x;
             double yaw     =  gamepad1.right_stick_x;
 
+            if (gamepad1.left_bumper){
+                speed_contol=.5;
+            }else if (gamepad1.right_bumper){
+                speed_contol=.25;
+            }else {
+                speed_contol=1;
+            }
+
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
-            double frontLeftPower  = axial + lateral + yaw;
-            double frontRightPower = axial - lateral - yaw;
-            double backLeftPower   = axial - lateral + yaw;
-            double backRightPower  = axial + lateral - yaw;
+            double frontLeftPower  = (axial + lateral + yaw) * speed_contol;
+            double frontRightPower = (axial - lateral - yaw) * speed_contol;
+            double backLeftPower   = (axial - lateral + yaw) * speed_contol;
+            double backRightPower  = (axial + lateral - yaw) * speed_contol;
 
             // Normalize the values so no wheel power exceeds 100%
             // This ensures that the robot maintains the desired motion.
@@ -158,16 +168,17 @@ public class TeleOp_V1 extends LinearOpMode {
                 backLeftPower   /= max;
                 backRightPower  /= max;
             }
+            //&& !right_bumper_prev && shooter_pre_slecter==1
 
-            if (gamepad2.right_bumper && !right_bumper_prev && shooter_pre_slecter==0){
+            if (gamepad2.x ){
                 shooterSpeed = shooter_pre_A;
                 shooter_pre_slecter=1;
                 telemetry.addLine("shooter setting FAR");
-            } else if (gamepad2.right_bumper && !right_bumper_prev && shooter_pre_slecter==1){
+            } else if (gamepad2.a){
                 shooterSpeed = shooter_pre_B;
                 shooter_pre_slecter=2;
                 telemetry.addLine("shooter setting MED");
-            } else if (gamepad2.right_bumper && !right_bumper_prev && shooter_pre_slecter==2) {
+            } else if (gamepad2.b) {
                 shooterSpeed = shooter_pre_C;
                 shooter_pre_slecter = 0;
                 telemetry.addLine("shooter setting CLOSE");
@@ -176,7 +187,12 @@ public class TeleOp_V1 extends LinearOpMode {
             telemetry.addData("Shooter speed", shooterSpeed);
             telemetry.addData("shooter setting", shooter_pre_slecter);
 
-            Shooter.setPower(gamepad2.left_bumper ? shooterSpeed : 0);
+            Shooter.setPower(shooterSpeed*powershoot);
+            if (gamepad2.dpad_up){
+                powershoot=1;
+            }else if (gamepad2.dpad_down){
+                powershoot=0;
+            }
 
             if (gamepad2.right_trigger>.2){
                 Trigger.setPosition(1);

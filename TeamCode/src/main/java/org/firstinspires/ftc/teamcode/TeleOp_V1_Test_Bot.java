@@ -38,6 +38,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.LED;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 /*
  * This file contains an example of a Linear "OpMode".
@@ -67,19 +72,19 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@TeleOp(name="TeleOp_v1_1", group="Linear OpMode")
+@TeleOp(name="TeleOp_V1_Test_Bot", group="Linear OpMode")
 @Config
-public class TeleOp_V1_1 extends LinearOpMode {
+public class TeleOp_V1_Test_Bot extends LinearOpMode {
+    private DigitalChannel redLED;
+    private DigitalChannel greenLED;
+
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor Intake = null;
-    private DcMotor Shooter=null;
     private DcMotor frontLeftDrive = null;
     private DcMotor backLeftDrive = null;
     private DcMotor frontRightDrive = null;
     private DcMotor backRightDrive = null;
-    private Servo Trigger = null;
     public static double shooter_pre_A = .8;
     public static double shooter_pre_B = .75;
     public static double shooter_pre_C = .7;
@@ -96,9 +101,9 @@ public class TeleOp_V1_1 extends LinearOpMode {
         backLeftDrive = hardwareMap.get(DcMotor.class, "RL");
         frontRightDrive = hardwareMap.get(DcMotor.class, "FR/RO");
         backRightDrive = hardwareMap.get(DcMotor.class, "RR/BO");
-        Shooter=hardwareMap.get(DcMotor.class,"Shooter");
-        Intake=hardwareMap.get(DcMotor.class,"Intake");
-        Trigger=hardwareMap.get(Servo.class,"Trigger");
+        redLED = hardwareMap.get(DigitalChannel.class, "red");
+        greenLED = hardwareMap.get(DigitalChannel.class, "green");
+
 
 
         // ########################################################################################
@@ -115,7 +120,7 @@ public class TeleOp_V1_1 extends LinearOpMode {
         backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
         frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
         backRightDrive.setDirection(DcMotor.Direction.REVERSE);
-        Shooter.setDirection(DcMotorSimple.Direction.REVERSE);
+
         frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -123,11 +128,13 @@ public class TeleOp_V1_1 extends LinearOpMode {
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-        Trigger.setPosition(0);
+
 
         waitForStart();
         runtime.reset();
         double clock_check;
+        redLED.setMode(DigitalChannel.Mode.OUTPUT);
+        greenLED.setMode(DigitalChannel.Mode.OUTPUT);
 
         boolean right_bumper_prev = false;
         double shooterSpeed = shooter_pre_A;
@@ -187,27 +194,25 @@ public class TeleOp_V1_1 extends LinearOpMode {
                 shooter_pre_slecter = 0;
                 telemetry.addLine("shooter setting CLOSE");
             }
+            if (gamepad1.y){
+                greenLED.setState(false);
+                redLED.setState(true);
+            }else {
+                greenLED.setState(true);
+                redLED.setState(true);
+            }
 
             telemetry.addData("Shooter speed", shooterSpeed);
             telemetry.addData("shooter setting", shooter_pre_slecter);
 
-            Shooter.setPower(shooterSpeed*powershoot);
-            if (gamepad2.dpad_up){
-                powershoot=1;
-            }else if (gamepad2.dpad_down){
-                powershoot=0;
-            }
 
-            if (gamepad2.right_trigger>.2 && gamepad1.right_trigger>.2){
-                Trigger.setPosition(1);
-            }else{
-                Trigger.setPosition(0);
-            }
+
+
             //TODO add auto ball cycle
 
             right_bumper_prev = gamepad2.right_bumper;
 
-            Intake.setPower(-gamepad2.left_stick_y);
+
 
 
 

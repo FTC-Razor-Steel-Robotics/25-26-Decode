@@ -33,6 +33,8 @@ import android.util.Size;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -73,7 +75,8 @@ import java.util.List;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@TeleOp(name = "Range_Finder_test", group = "Concept")
+    @Disabled
+@Autonomous(name = "Range_Finder_test", group = "Concept")
 //@Disabled
 public class Range_Finder extends LinearOpMode {
 
@@ -95,6 +98,7 @@ public class Range_Finder extends LinearOpMode {
     private VisionPortal visionPortal;
 
     @Override
+
     public void runOpMode() {
         frontLeftDrive = hardwareMap.get(DcMotor.class, "FL/LO");
         backLeftDrive = hardwareMap.get(DcMotor.class, "RL");

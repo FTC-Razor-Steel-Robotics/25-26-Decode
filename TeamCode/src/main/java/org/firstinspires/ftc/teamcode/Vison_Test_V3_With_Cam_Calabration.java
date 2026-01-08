@@ -38,6 +38,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 
 @Autonomous
+@Disabled
 public class Vison_Test_V3_With_Cam_Calabration extends LinearOpMode {
     VisionPortal portal1;
     VisionPortal portal2;
