@@ -140,6 +140,8 @@ public class TeleOp_V1_Test_Bot extends LinearOpMode {
         double shooterSpeed = shooter_pre_A;
         double speed_contol= 1;
         double powershoot=0;
+        greenLED.setState(true);
+        redLED.setState(true);
 
 
         // run until the end of the match (driver presses STOP)
@@ -150,7 +152,7 @@ public class TeleOp_V1_Test_Bot extends LinearOpMode {
             //drive was reversed 12/20/2025
             double axial   = gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral =  -gamepad1.left_stick_x;
-            double yaw     =  gamepad1.right_stick_x;
+            double yaw     =  -gamepad1.right_stick_x;
 
             if (gamepad1.left_bumper){
                 speed_contol=.5;
@@ -194,13 +196,14 @@ public class TeleOp_V1_Test_Bot extends LinearOpMode {
                 shooter_pre_slecter = 0;
                 telemetry.addLine("shooter setting CLOSE");
             }
-            if (gamepad1.y){
+            /*if (gamepad1.y){
                 greenLED.setState(false);
                 redLED.setState(true);
             }else {
                 greenLED.setState(true);
                 redLED.setState(true);
-            }
+            }*/
+
 
             telemetry.addData("Shooter speed", shooterSpeed);
             telemetry.addData("shooter setting", shooter_pre_slecter);
