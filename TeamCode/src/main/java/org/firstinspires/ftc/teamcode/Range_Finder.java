@@ -70,13 +70,13 @@ public class Range_Finder extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     Camera camera;
-    Robot robot;
+    CompBot robot;
 
     @Override
     public void runOpMode() {
 		telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-		robot = new Robot(hardwareMap, telemetry);
+		robot = new CompBot(hardwareMap, telemetry);
         camera = new Camera(hardwareMap, telemetry, true);
 
         // Wait for the DS start button to be touched.

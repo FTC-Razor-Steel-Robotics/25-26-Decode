@@ -2,84 +2,50 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 @Config
-public class Robot {
+public abstract class Robot {
 	//Create new classes for our drive motors and intake/shooting motors
 	//This will split them into groups in the dashboard, making it a bit less cluttered
 	//For reference, this is also done in MecanumDrive.java
-	public static class DriveConfig {
-		public String frontLeftDriveString = "FL/LO";
-		public String backLeftDriveDriveString = "RL";
-		public String frontRightDriveString = "FR/RO";
-		public String backRightDriveString = "RR/BO";
+	protected static abstract class DriveConfig {
+		public static String frontLeftDriveString;
+		public static String backLeftDriveDriveString;
+		public static String frontRightDriveString;
+		public static String backRightDriveString;
 	}
 
-	public static class ShooterConfig {
-		public String shooterString = "Shooter";
-		public String intakeString = "Intake";
-		public String triggerString = "Trigger";
+	protected static abstract class ShooterConfig {
+		public static String shooterString;
+		public static String intakeString;
 
-		public double[] shooterSpeeds = {0.8, 0.75, 0.7};
+		public static double[] shooterSpeeds;
 
-		public double triggerUpPos = 1;
-		public double triggerDownPos = 0;
+		public static int shooterSpeedIndex = 0;
 	}
-
-	//This could go into ShooterConfig, but it's not necessary
-	int shooterSpeedIndex = 0;
 
 	//Create instances of the above classes so that way we can actually use them
-	public static DriveConfig DRIVE_CONFIG = new DriveConfig();
-	public static ShooterConfig SHOOTER_CONFIG = new ShooterConfig();
+//	public static DriveConfig DRIVE_CONFIG;
+//	public static ShooterConfig SHOOTER_CONFIG;
 
-	private HardwareMap hardwareMap;
-	private Telemetry telemetry;
+	protected HardwareMap hardwareMap;
+	protected Telemetry telemetry;
 
-	private DcMotor frontLeftDrive;
-	private DcMotor backLeftDrive;
-	private DcMotor frontRightDrive;
-	private DcMotor backRightDrive;
+	protected DcMotor frontLeftDrive;
+	protected DcMotor backLeftDrive;
+	protected DcMotor frontRightDrive;
+	protected DcMotor backRightDrive;
 
-	private DcMotor intake;
-	private DcMotor shooter;
-	private Servo trigger;
+	protected DcMotor intake;
+	protected DcMotor shooter;
 
 	public Robot(HardwareMap hwMap, Telemetry telem) {
 		//Create copies of the hardware map and telemetry so we can use them throughout the class
 		hardwareMap = hwMap;
 		telemetry = telem;
-
-		//Initialize drive motors
-		frontLeftDrive = hardwareMap.get(DcMotor.class, DRIVE_CONFIG.frontLeftDriveString);
-		backLeftDrive = hardwareMap.get(DcMotor.class, DRIVE_CONFIG.backLeftDriveDriveString);
-		frontRightDrive = hardwareMap.get(DcMotor.class, DRIVE_CONFIG.frontRightDriveString);
-		backRightDrive = hardwareMap.get(DcMotor.class, DRIVE_CONFIG.backRightDriveString);
-
-		frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
-		backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-		frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
-		backRightDrive.setDirection(DcMotor.Direction.REVERSE);
-
-		frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		backLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		frontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		backRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-		//Initialize the other motors
-		shooter = hardwareMap.get(DcMotor.class, SHOOTER_CONFIG.shooterString);
-		intake = hardwareMap.get(DcMotor.class, SHOOTER_CONFIG.intakeString);
-		trigger = hardwareMap.get(Servo.class, SHOOTER_CONFIG.triggerString);
-
-		shooter.setDirection(DcMotorSimple.Direction.REVERSE);
-
-		//Set servo default positions
-		moveTrigger(false);
 	}
 
 	public void driveMecanum(double axial, double lateral, double yaw) {
@@ -113,30 +79,18 @@ public class Robot {
 		telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
 	}
 
-	public void spinShooter(boolean spin, boolean toggleSpeed) {
+	public void fireShooter(boolean spin, boolean toggleSpeed) {
 		//Cycle through the array and go back to 0 if we reach the end
 		if (toggleSpeed) {
-			if (++shooterSpeedIndex >= SHOOTER_CONFIG.shooterSpeeds.length)
-				shooterSpeedIndex = 0;
+			if (++ShooterConfig.shooterSpeedIndex >= ShooterConfig.shooterSpeeds.length)
+				ShooterConfig.shooterSpeedIndex = 0;
 		}
 
-		double shooterSpeed = SHOOTER_CONFIG.shooterSpeeds[shooterSpeedIndex];
+		double shooterSpeed = ShooterConfig.shooterSpeeds[ShooterConfig.shooterSpeedIndex];
 		telemetry.addData("Shooter Speed", shooterSpeed);
 
 		shooter.setPower(spin ? shooterSpeed : 0);
 	}
 
-	public void moveTrigger(boolean up) {
-		double triggerPos = up ? SHOOTER_CONFIG.triggerUpPos
-								: SHOOTER_CONFIG.triggerDownPos;
-		telemetry.addData("Trigger Pos", triggerPos);
-
-		trigger.setPosition(triggerPos);
-	}
-
-	public void setIntakeSpeed(double speed) {
-		telemetry.addData("Intake Speed", speed);
-
-		intake.setPower(speed);
-	}
+	public abstract void setIntakeSpeed(double speed);
 }
