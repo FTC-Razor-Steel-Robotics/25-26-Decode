@@ -33,7 +33,7 @@ public class MotorTest extends LinearOpMode {
 	Servo carousel;
 	VoltageSensor voltageSensor;
 
-	public static double shooterMax = 0.8;
+	public static double shooterBaseSpeed = 0.6;
 	public static double batMin = 11;
 	public static double batMax = 14;
 	public static double voltageCompScaling = 1;
@@ -77,7 +77,7 @@ public class MotorTest extends LinearOpMode {
 
 		while (opModeIsActive()) {
 //			shooter.setPower(gamepad1.y ? shooterMax : 0);
-			shooter.setPower(gamepad1.y ? 0.6 * (batMin / (voltageSensor.getVoltage() * voltageCompScaling)) : 0);
+			shooter.setPower(gamepad1.y ? shooterBaseSpeed * (batMin / (voltageSensor.getVoltage() * voltageCompScaling)) : 0);
 			telemetry.addData("Motor vel", shooter.getVelocity());
 			telemetry.addData("Motor Power", shooter.getPower());
 			telemetry.addData("Battery Voltage", voltageSensor.getVoltage());

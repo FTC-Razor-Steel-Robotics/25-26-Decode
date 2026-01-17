@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -13,6 +14,14 @@ public class CompBot extends Robot {
 		public static String backLeftDriveDriveString = "RL";
 		public static String frontRightDriveString = "FR/RO";
 		public static String backRightDriveString = "RR/BO";
+
+		public String[] getDriveStrings() {
+			return new String[0];
+		}
+
+		public boolean[] getDriveReversals() {
+			return new boolean[0];
+		}
 	}
 
 	public static class CompShooterConfig extends ShooterConfig {
@@ -24,18 +33,35 @@ public class CompBot extends Robot {
 
 		public static double triggerUpPos = 1;
 		public static double triggerDownPos = 0;
+
+		public String getShooterString() {
+			return "";
+		}
+
+		public double[] getShooterSpeeds() {
+			return new double[0];
+		}
+
+		public double[] getShooterVoltages() {
+			return new double[0];
+		}
+
+		public double[] getShooterSpeedsCompensated() {
+			return new double[0];
+		}
 	}
 
 	private Servo trigger;
+	private DcMotor intake;
 
 	public CompBot(HardwareMap hwMap, Telemetry telem) {
 		super(hwMap, telem);
 
 		//Initialize drive motors
-		frontLeftDrive = hardwareMap.get(DcMotor.class, MentorBot.MentorDriveConfig.frontLeftDriveString);
-		backLeftDrive = hardwareMap.get(DcMotor.class, MentorBot.MentorDriveConfig.backLeftDriveDriveString);
-		frontRightDrive = hardwareMap.get(DcMotor.class, MentorBot.MentorDriveConfig.frontRightDriveString);
-		backRightDrive = hardwareMap.get(DcMotor.class, MentorBot.MentorDriveConfig.backRightDriveString);
+		frontLeftDrive = hardwareMap.get(DcMotor.class, CompDriveConfig.frontLeftDriveString);
+		backLeftDrive = hardwareMap.get(DcMotor.class, CompDriveConfig.backLeftDriveDriveString);
+		frontRightDrive = hardwareMap.get(DcMotor.class, CompDriveConfig.frontRightDriveString);
+		backRightDrive = hardwareMap.get(DcMotor.class, CompDriveConfig.backRightDriveString);
 
 		frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
 		backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -48,7 +74,7 @@ public class CompBot extends Robot {
 		backRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 		//Initialize the other motors
-		shooter = hardwareMap.get(DcMotor.class, CompShooterConfig.shooterString);
+		shooter = hardwareMap.get(DcMotorEx.class, CompShooterConfig.shooterString);
 		intake = hardwareMap.get(DcMotor.class, CompShooterConfig.intakeString);
 
 		shooter.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -57,6 +83,10 @@ public class CompBot extends Robot {
 
 		//Set servo default positions
 		moveTrigger(false);
+	}
+
+	public void spinIntake(double speed) {
+
 	}
 
 	public void moveTrigger(boolean up) {
