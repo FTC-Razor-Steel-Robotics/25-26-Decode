@@ -57,20 +57,20 @@ public final class MecanumDrive {
         // IMU orientation
         // TODO: fill in these values based on
         //   see https://ftc-docs.firstinspires.org/en/latest/programming_resources/imu/imu.html?highlight=imu#physical-hub-mounting
-        public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
-                RevHubOrientationOnRobot.LogoFacingDirection.UP;
-        public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
-                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
+		public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
+				MentorBot.rrConfig.getLogoDirection();
+		public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
+				MentorBot.rrConfig.getUSBDirection();
 
         // drive model parameters
-        public double inPerTick = 0.0029495016769344;
-        public double lateralInPerTick = 0.0024392835628244017;
-        public double trackWidthTicks = 4313.671270746097;
+        public double inPerTick = 1;
+        public double lateralInPerTick = inPerTick;
+        public double trackWidthTicks = 0;
 
         // feedforward parameters (in tick units)
-        public double kS = 0.8024994172923048;
-        public double kV = 0.0005953089574205976;
-        public double kA = 0.0001;
+        public double kS = 0;
+        public double kV = 0;
+        public double kA = 0;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 50;
@@ -82,13 +82,13 @@ public final class MecanumDrive {
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double axialGain = 4;
-        public double lateralGain = .5;
-        public double headingGain = 1; // shared with turn
+        public double axialGain = 0.0;
+        public double lateralGain = 0.0;
+        public double headingGain = 0.0; // shared with turn
 
-        public double axialVelGain = 2.0;
-        public double lateralVelGain = 0.5;
-        public double headingVelGain = 1.0; // shared with turn
+        public double axialVelGain = 0.0;
+        public double lateralVelGain = 0.0;
+        public double headingVelGain = 0.0; // shared with turn
     }
 
     public static Params PARAMS = new Params();
@@ -225,10 +225,12 @@ public final class MecanumDrive {
 
         // TODO: make sure your config has motors with these names (or change them)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
-        leftFront = hardwareMap.get(DcMotorEx.class, "FL/LO");
-        leftBack = hardwareMap.get(DcMotorEx.class, "RL");
-        rightBack = hardwareMap.get(DcMotorEx.class, "RR/BO");
-        rightFront = hardwareMap.get(DcMotorEx.class, "FR/RO");
+		String[] driveStrings = MentorBot.driveConfig.getDriveStrings();
+
+		leftFront = hardwareMap.get(DcMotorEx.class, driveStrings[0]);
+		leftBack = hardwareMap.get(DcMotorEx.class, driveStrings[1]);
+		rightBack = hardwareMap.get(DcMotorEx.class, driveStrings[3]);
+		rightFront = hardwareMap.get(DcMotorEx.class, driveStrings[2]);
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -236,8 +238,16 @@ public final class MecanumDrive {
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // TODO: reverse motor directions if needed
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+		boolean[] driveReversals = MentorBot.driveConfig.getDriveReversals();
+
+		leftFront.setDirection(driveReversals[0] ?
+				DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD);
+		leftBack.setDirection(driveReversals[1] ?
+				DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD);
+		rightFront.setDirection(driveReversals[2] ?
+				DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD);
+		rightBack.setDirection(driveReversals[3] ?
+				DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD);
 
         // TODO: make sure your config has an IMU with this name (can be BNO or BHI)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html

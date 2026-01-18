@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -26,9 +27,17 @@ public abstract class Robot {
 		public abstract double[] getShooterSpeedsCompensated();
 	}
 
+	//TODO: Make sure that the parallel odometry wheels are on ports 0 and 3 for best performance
+	protected static abstract class RRConfig {
+		public abstract String[] getOdomStrings();
+		public abstract RevHubOrientationOnRobot.LogoFacingDirection getLogoDirection();
+		public abstract RevHubOrientationOnRobot.UsbFacingDirection getUSBDirection();
+	}
+
 	//Create instances of the above classes so that way we can actually use them
-	protected static DriveConfig driveConfig;
-	protected ShooterConfig shooterConfig;
+	public static DriveConfig driveConfig;
+	public static ShooterConfig shooterConfig;
+	public static RRConfig rrConfig;
 
 	protected int shooterSpeedIndex = 0;
 

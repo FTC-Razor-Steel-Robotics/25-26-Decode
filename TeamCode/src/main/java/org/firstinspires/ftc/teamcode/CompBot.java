@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -51,8 +52,34 @@ public class CompBot extends Robot {
 		}
 	}
 
+	public static class CompRRConfig extends RRConfig {
+		public static String rightOdomString = CompDriveConfig.frontRightDriveString;
+		public static String leftOdomString = CompDriveConfig.frontLeftDriveString;
+		public static String backOdomString = CompDriveConfig.backRightDriveString;
+
+		public String[] getOdomStrings() {
+			return new String[] {
+					rightOdomString,
+					leftOdomString,
+					backOdomString
+			};
+		}
+
+		public RevHubOrientationOnRobot.LogoFacingDirection getLogoDirection() {
+			return null;
+		}
+
+		public RevHubOrientationOnRobot.UsbFacingDirection getUSBDirection() {
+			return null;
+		}
+	}
+
 	private Servo trigger;
 	private DcMotor intake;
+
+	public static DriveConfig driveConfig = new CompDriveConfig();
+	public static ShooterConfig shooterConfig = new CompShooterConfig();
+	public static RRConfig rrConfig = new CompRRConfig();
 
 	public CompBot(HardwareMap hwMap, Telemetry telem) {
 		super(hwMap, telem);

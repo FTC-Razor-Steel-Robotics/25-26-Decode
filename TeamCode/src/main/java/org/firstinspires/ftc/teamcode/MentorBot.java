@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -18,7 +19,7 @@ public class MentorBot extends Robot {
 		public static String backRightDriveString = "RR";
 
 		public String[] getDriveStrings() {
-			return new String[]{
+			return new String[] {
 					frontLeftDriveString,
 					backLeftDriveDriveString,
 					frontRightDriveString,
@@ -32,7 +33,7 @@ public class MentorBot extends Robot {
 		public static boolean backRightDriveReverse = false;
 
 		public boolean[] getDriveReversals() {
-			return new boolean[]{
+			return new boolean[] {
 					frontLeftDriveReverse,
 					backLeftDriveDriveReverse,
 					frontRightDriveReverse,
@@ -80,6 +81,28 @@ public class MentorBot extends Robot {
 			}
 
 			return compensated;
+		}
+	}
+
+	public static class MentorRRConfig extends RRConfig {
+		public static String rightOdomString = "RO";
+		public static String leftOdomString = MentorDriveConfig.frontLeftDriveString;
+		public static String frontOdomString = MentorDriveConfig.frontRightDriveString;
+
+		public String[] getOdomStrings() {
+			return new String[] {
+					rightOdomString,
+					leftOdomString,
+					frontOdomString
+			};
+		}
+
+		public RevHubOrientationOnRobot.LogoFacingDirection getLogoDirection() {
+			return RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
+		}
+
+		public RevHubOrientationOnRobot.UsbFacingDirection getUSBDirection() {
+			return RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
 		}
 	}
 
@@ -135,6 +158,10 @@ public class MentorBot extends Robot {
 
 	//Boolean to keep track of our threads
 	private static volatile boolean intakeBusy = false;
+
+	public static DriveConfig driveConfig = new MentorDriveConfig();
+	public static ShooterConfig shooterConfig = new MentorShooterConfig();
+	public static RRConfig rrConfig = new MentorRRConfig();
 
 	public MentorBot(HardwareMap hwMap, Telemetry telem) {
 		super(hwMap, telem);
@@ -312,7 +339,7 @@ public class MentorBot extends Robot {
 			moveCarousel(curCarouselPos.next());
 	}
 
-	private void moveCarousel(CarouselPos pos) {
+	public void moveCarousel(CarouselPos pos) {
 		if (curCarouselDeliverPos == CarouselDeliverPos.CAROUSEL) {
 			carousel.setPosition(MentorShooterConfig.carouselPositions[pos.ordinal()]);
 			curCarouselPos = pos;
