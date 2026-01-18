@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -60,6 +61,8 @@ public class MentorBot extends Robot {
 		public static double[] carouselDeliverPositions = {0, 0.5, 1};
 		public static double[] shooterDeliverPositions = {0, 0.5};
 
+		public static long intakeTime = 2000;
+
 		public double[] getShooterSpeeds() {
 			return shooterSpeeds;
 		}
@@ -78,6 +81,18 @@ public class MentorBot extends Robot {
 
 			return compensated;
 		}
+	}
+
+	@Config
+	public static class MentorLiftConfig {
+		public static String frontLiftString = "frontLift";
+		public static String rearLiftString = "rearLift";
+
+		public static boolean frontLiftReverse = true;
+		public static boolean rearLiftReverse = true;
+
+		public static double liftSpeed = 0.3;
+		public static int liftMax = 500;
 	}
 
 	public enum CarouselPos {
@@ -110,10 +125,16 @@ public class MentorBot extends Robot {
 	private CarouselPos curCarouselPos;
 	private CarouselDeliverPos curCarouselDeliverPos;
 
+	private DcMotor frontLift;
+	private DcMotor rearLift;
+
 	private CRServo intake;
 	private Servo shooterDeliver;
 	private Servo carouselDeliver;
 	private Servo carousel;
+
+	//Boolean to keep track of our threads
+	private static volatile boolean intakeBusy = false;
 
 	public MentorBot(HardwareMap hwMap, Telemetry telem) {
 		super(hwMap, telem);
@@ -123,6 +144,7 @@ public class MentorBot extends Robot {
 
 		initDrive();
 		initShooter();
+		initLift();
 	}
 
 	public void initShooter() {
@@ -140,7 +162,138 @@ public class MentorBot extends Robot {
 		carousel = hardwareMap.get(Servo.class, MentorShooterConfig.carouselString);
 
 		moveCarouselDeliver(CarouselDeliverPos.CAROUSEL);
+
+		//Allow time for the carousel deliver to get out of the way
+		robotSleep(250);
+
 		moveCarousel(CarouselPos.CENTER);
+	}
+
+	public void initLift() {
+		frontLift = hardwareMap.get(DcMotor.class, MentorLiftConfig.frontLiftString);
+		rearLift = hardwareMap.get(DcMotor.class, MentorLiftConfig.rearLiftString);
+
+		frontLift.setDirection(MentorLiftConfig.frontLiftReverse ?
+								DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD);
+		rearLift.setDirection(MentorLiftConfig.rearLiftReverse ?
+				DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD);
+
+		frontLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		rearLift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+		frontLift.setTargetPosition(0);
+		rearLift.setTargetPosition(0);
+
+		frontLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+		rearLift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+		frontLift.setPower(MentorLiftConfig.liftSpeed);
+		rearLift.setPower(MentorLiftConfig.liftSpeed);
+	}
+
+	//Shorthand function to intake into the current carousel selection
+	public void autoIntake() {
+		autoIntake(curCarouselPos);
+	}
+
+	//TODO: Utilize a sensor to determine when a ball has arrived in the carousel deliver
+	public void autoIntake(CarouselPos pos) {
+		Thread thread = new Thread() {
+			@Override
+			public void run() {
+				intakeBusy = true;
+
+				//Rotate the carousel to select the right position
+				//Check if we can save time
+				if (pos != curCarouselPos) {
+					//Ensure the carousel deliver won't get in the way
+					//Check if we can save time
+					if (curCarouselDeliverPos != CarouselDeliverPos.CAROUSEL) {
+						moveCarouselDeliver(CarouselDeliverPos.CAROUSEL);
+
+						robotSleep(250);
+					}
+
+					moveCarousel(pos);
+
+					//TODO: Add extra time if we are going from LEFT to RIGHT or vice-versa
+					// We need 500 ms for the worst case
+					// Maybe even use different values for all the different cases
+					robotSleep(500);
+				}
+
+				//Intake the ball
+				moveCarouselDeliver(CarouselDeliverPos.INTAKE);
+				//Give the carousel deliver just a bit of time to come down first
+				robotSleep(250);
+				spinIntake(1);
+
+				robotSleep(MentorShooterConfig.intakeTime);
+
+				//Reset the carousel deliver position
+				moveCarouselDeliver(CarouselDeliverPos.CAROUSEL);
+
+				//Assist the carousel deliver with the ball before we stop the intake
+				robotSleep(250);
+
+				spinIntake(0);
+
+				intakeBusy = false;
+			}
+		};
+
+		//Make sure we don't create duplicate threads trying to do the same thing
+		if (!intakeBusy)
+			thread.start();
+	}
+
+	//Shorthand function to dispense the current carousel selection
+	public void autoDispense() {
+		autoDispense(curCarouselPos);
+	}
+
+	public void autoDispense(CarouselPos pos) {
+		Thread thread = new Thread() {
+			@Override
+			public void run() {
+				intakeBusy = true;
+
+				//Rotate the carousel to select the right position
+				//Check if we can save time
+				if (pos != curCarouselPos) {
+					//Ensure the carousel deliver won't get in the way
+					//Check if we can save time
+					if (curCarouselDeliverPos != CarouselDeliverPos.CAROUSEL) {
+						moveCarouselDeliver(CarouselDeliverPos.CAROUSEL);
+
+						robotSleep(250);
+					}
+
+					moveCarousel(pos);
+
+					//TODO: Add extra time if we are going from LEFT to RIGHT or vice-versa
+					// We need 500 ms for the worst case
+					// Maybe even use different values for all the different cases
+					robotSleep(500);
+				}
+
+				//Dispense the ball
+				moveCarouselDeliver(CarouselDeliverPos.INTAKE);
+				spinIntake(-1);
+
+				robotSleep(MentorShooterConfig.intakeTime);
+
+				//Reset the carousel deliver position
+				moveCarouselDeliver(CarouselDeliverPos.CAROUSEL);
+				spinIntake(0);
+
+				intakeBusy = false;
+			}
+		};
+
+		//Make sure we don't create duplicate threads trying to do the same thing
+		if (!intakeBusy)
+			thread.start();
 	}
 
 	public void spinIntake(double speed) {
@@ -169,5 +322,20 @@ public class MentorBot extends Robot {
 	public void moveCarouselDeliver(CarouselDeliverPos pos) {
 		carouselDeliver.setPosition(MentorShooterConfig.carouselDeliverPositions[pos.ordinal()]);
 		curCarouselDeliverPos = pos;
+	}
+
+	public void moveLift(boolean up, boolean down) {
+		if (up) {
+			frontLift.setTargetPosition(MentorLiftConfig.liftMax);
+			rearLift.setTargetPosition(MentorLiftConfig.liftMax);
+		} else if (down) {
+			frontLift.setTargetPosition(0);
+			rearLift.setTargetPosition(0);
+		}
+
+		telemetry.addData("Front Lift Target", frontLift.getTargetPosition());
+		telemetry.addData("Front Lift Pos", frontLift.getCurrentPosition());
+		telemetry.addData("Rear Lift Target", rearLift.getTargetPosition());
+		telemetry.addData("Rear Lift Pos", rearLift.getCurrentPosition());
 	}
 }

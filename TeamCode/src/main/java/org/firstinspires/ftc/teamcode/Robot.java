@@ -130,4 +130,12 @@ public abstract class Robot {
 	}
 
 	public abstract void spinIntake(double speed);
+
+	//Easier sleep function that doesn't need to be encapsulated in a try/catch
+	//Hopefully ignoring the exception won't come to bite back
+	protected void robotSleep(long ms) {
+		try {
+			Thread.sleep(ms);
+		} catch (InterruptedException e) {}
+	}
 }
