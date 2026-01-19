@@ -30,6 +30,7 @@ public abstract class Robot {
 	//TODO: Make sure that the parallel odometry wheels are on ports 0 and 3 for best performance
 	protected static abstract class RRConfig {
 		public abstract String[] getOdomStrings();
+		public abstract boolean[] getOdomReversals();
 		public abstract RevHubOrientationOnRobot.LogoFacingDirection getLogoDirection();
 		public abstract RevHubOrientationOnRobot.UsbFacingDirection getUSBDirection();
 	}

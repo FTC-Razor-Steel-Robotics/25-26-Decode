@@ -63,14 +63,14 @@ public final class MecanumDrive {
 				MentorBot.rrConfig.getUSBDirection();
 
         // drive model parameters
-        public double inPerTick = 1;
-        public double lateralInPerTick = inPerTick;
-        public double trackWidthTicks = 0;
+        public double inPerTick = (112 - 12) / 33846.0;
+        public double lateralInPerTick = 0.0023261044003389103;
+        public double trackWidthTicks = 3719.4989843068233;
 
         // feedforward parameters (in tick units)
-        public double kS = 0;
-        public double kV = 0;
-        public double kA = 0;
+        public double kS = 1.428796935440296;
+        public double kV = 0.0005975382084278895;
+        public double kA = 0.00013;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 50;
@@ -82,9 +82,9 @@ public final class MecanumDrive {
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double axialGain = 0.0;
-        public double lateralGain = 0.0;
-        public double headingGain = 0.0; // shared with turn
+        public double axialGain = 3;
+        public double lateralGain = 2.5;
+        public double headingGain = 3.5; // shared with turn
 
         public double axialVelGain = 0.0;
         public double lateralVelGain = 0.0;

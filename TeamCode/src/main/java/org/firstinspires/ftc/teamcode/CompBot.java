@@ -65,6 +65,10 @@ public class CompBot extends Robot {
 			};
 		}
 
+		public boolean[] getOdomReversals() {
+			return new boolean[0];
+		}
+
 		public RevHubOrientationOnRobot.LogoFacingDirection getLogoDirection() {
 			return null;
 		}

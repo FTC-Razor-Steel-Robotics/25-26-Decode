@@ -84,6 +84,7 @@ public class MentorBot extends Robot {
 		}
 	}
 
+	@Config
 	public static class MentorRRConfig extends RRConfig {
 		public static String rightOdomString = "RO";
 		public static String leftOdomString = MentorDriveConfig.frontLeftDriveString;
@@ -94,6 +95,18 @@ public class MentorBot extends Robot {
 					rightOdomString,
 					leftOdomString,
 					frontOdomString
+			};
+		}
+
+		public static boolean rightOdomReverse = true;
+		public static boolean leftOdomReverse = false;
+		public static boolean frontOdomReverse = true;
+
+		public boolean[] getOdomReversals() {
+			return new boolean[] {
+					rightOdomReverse,
+					leftOdomReverse,
+					frontOdomReverse
 			};
 		}
 
@@ -166,8 +179,9 @@ public class MentorBot extends Robot {
 	public MentorBot(HardwareMap hwMap, Telemetry telem) {
 		super(hwMap, telem);
 
-		driveConfig = new MentorDriveConfig();
-		shooterConfig = new MentorShooterConfig();
+		super.driveConfig = driveConfig;
+		super.shooterConfig = shooterConfig;
+		super.rrConfig = rrConfig;
 
 		initDrive();
 		initShooter();
