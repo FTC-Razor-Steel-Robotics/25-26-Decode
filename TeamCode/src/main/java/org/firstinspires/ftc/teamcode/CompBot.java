@@ -8,76 +8,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.configs.CompDriveConfig;
+import org.firstinspires.ftc.teamcode.configs.CompRRConfig;
+import org.firstinspires.ftc.teamcode.configs.CompShooterConfig;
+import org.firstinspires.ftc.teamcode.configs.DriveConfig;
+import org.firstinspires.ftc.teamcode.configs.RRConfig;
+import org.firstinspires.ftc.teamcode.configs.ShooterConfig;
 
 public class CompBot extends Robot {
-	public static class CompDriveConfig extends Robot.DriveConfig {
-		public static String frontLeftDriveString = "FL/LO";
-		public static String backLeftDriveDriveString = "RL";
-		public static String frontRightDriveString = "FR/RO";
-		public static String backRightDriveString = "RR/BO";
-
-		public String[] getDriveStrings() {
-			return new String[0];
-		}
-
-		public boolean[] getDriveReversals() {
-			return new boolean[0];
-		}
-	}
-
-	public static class CompShooterConfig extends ShooterConfig {
-		public static String shooterString = "Shooter";
-		public static String intakeString = "Intake";
-		public static String triggerString = "Trigger";
-
-		public static double[] shooterSpeeds = {0.8, 0.75, 0.7};
-
-		public static double triggerUpPos = 1;
-		public static double triggerDownPos = 0;
-
-		public String getShooterString() {
-			return "";
-		}
-
-		public double[] getShooterSpeeds() {
-			return new double[0];
-		}
-
-		public double[] getShooterVoltages() {
-			return new double[0];
-		}
-
-		public double[] getShooterSpeedsCompensated() {
-			return new double[0];
-		}
-	}
-
-	public static class CompRRConfig extends RRConfig {
-		public static String rightOdomString = CompDriveConfig.frontRightDriveString;
-		public static String leftOdomString = CompDriveConfig.frontLeftDriveString;
-		public static String backOdomString = CompDriveConfig.backRightDriveString;
-
-		public String[] getOdomStrings() {
-			return new String[] {
-					rightOdomString,
-					leftOdomString,
-					backOdomString
-			};
-		}
-
-		public boolean[] getOdomReversals() {
-			return new boolean[0];
-		}
-
-		public RevHubOrientationOnRobot.LogoFacingDirection getLogoDirection() {
-			return null;
-		}
-
-		public RevHubOrientationOnRobot.UsbFacingDirection getUSBDirection() {
-			return null;
-		}
-	}
-
 	private Servo trigger;
 	private DcMotor intake;
 
@@ -86,7 +24,7 @@ public class CompBot extends Robot {
 	public static RRConfig rrConfig = new CompRRConfig();
 
 	public CompBot(HardwareMap hwMap, Telemetry telem) {
-		super(hwMap, telem);
+		super(hwMap, telem, RobotType.COMP_BOT);
 
 		//Initialize drive motors
 		frontLeftDrive = hardwareMap.get(DcMotor.class, CompDriveConfig.frontLeftDriveString);

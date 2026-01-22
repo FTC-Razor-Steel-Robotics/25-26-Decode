@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -8,37 +8,24 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.configs.DriveConfig;
+import org.firstinspires.ftc.teamcode.configs.RRConfig;
+import org.firstinspires.ftc.teamcode.configs.ShooterConfig;
 
+@Config
 public abstract class Robot {
-	//Create new classes for our drive motors and intake/shooting motors
-	//This will split them into groups in the dashboard, making it a bit less cluttered
-	//For reference, this is also done in MecanumDrive.java
-	protected static abstract class DriveConfig {
-		//You can thank this Stack Overflow answer for this method of doing things
-		//https://stackoverflow.com/a/2371302
-		public abstract String[] getDriveStrings();
-		public abstract boolean[] getDriveReversals();
+	public enum RobotType {
+		COMP_BOT,
+		MENTOR_BOT
 	}
 
-	protected static abstract class ShooterConfig {
-		public abstract String getShooterString();
-		public abstract double[] getShooterSpeeds();
-		public abstract double[] getShooterVoltages();
-		public abstract double[] getShooterSpeedsCompensated();
-	}
+	public static RobotType DEFAULT_ROBOT_TYPE = RobotType.MENTOR_BOT;
+	public final RobotType robotType;
 
-	//TODO: Make sure that the parallel odometry wheels are on ports 0 and 3 for best performance
-	protected static abstract class RRConfig {
-		public abstract String[] getOdomStrings();
-		public abstract boolean[] getOdomReversals();
-		public abstract RevHubOrientationOnRobot.LogoFacingDirection getLogoDirection();
-		public abstract RevHubOrientationOnRobot.UsbFacingDirection getUSBDirection();
-	}
-
-	//Create instances of the above classes so that way we can actually use them
-	public static DriveConfig driveConfig;
-	public static ShooterConfig shooterConfig;
-	public static RRConfig rrConfig;
+	//Create instances of our configs
+	public DriveConfig driveConfig;
+	public ShooterConfig shooterConfig;
+	public RRConfig rrConfig;
 
 	protected int shooterSpeedIndex = 0;
 
@@ -54,10 +41,12 @@ public abstract class Robot {
 
 	protected DcMotorEx shooter;
 
-	protected Robot(HardwareMap hwMap, Telemetry telem) {
+	protected Robot(HardwareMap hwMap, Telemetry telem, RobotType type) {
 		//Create copies of the hardware map and telemetry so we can use them throughout the class
 		hardwareMap = hwMap;
 		telemetry = telem;
+
+		robotType = type;
 
 		//Initialize our voltage sensor
 		voltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
@@ -133,8 +122,8 @@ public abstract class Robot {
 
 		double shooterSpeedCompensated = shooterConfig.getShooterSpeedsCompensated()[shooterSpeedIndex];
 		telemetry.addData("Battery Voltage", voltageSensor.getVoltage());
-		telemetry.addData("Shooter Speed Compensated", shooterSpeedCompensated);
 		telemetry.addData("Shooter Speed", shooterSpeedCompensated / voltageSensor.getVoltage());
+		telemetry.addData("Shooter Speed Compensated", shooterSpeedCompensated);
 
 		shooter.setPower(spin ? shooterSpeedCompensated / voltageSensor.getVoltage() : 0);
 	}

@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -9,128 +7,15 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.configs.DriveConfig;
+import org.firstinspires.ftc.teamcode.configs.MentorDriveConfig;
+import org.firstinspires.ftc.teamcode.configs.MentorLiftConfig;
+import org.firstinspires.ftc.teamcode.configs.MentorRRConfig;
+import org.firstinspires.ftc.teamcode.configs.MentorShooterConfig;
+import org.firstinspires.ftc.teamcode.configs.RRConfig;
+import org.firstinspires.ftc.teamcode.configs.ShooterConfig;
 
 public class MentorBot extends Robot {
-	@Config
-	public static class MentorDriveConfig extends DriveConfig {
-		public static String frontLeftDriveString = "FL/LO";
-		public static String backLeftDriveDriveString = "RL";
-		public static String frontRightDriveString = "FR/FO";
-		public static String backRightDriveString = "RR";
-
-		public String[] getDriveStrings() {
-			return new String[] {
-					frontLeftDriveString,
-					backLeftDriveDriveString,
-					frontRightDriveString,
-					backRightDriveString
-			};
-		}
-
-		public static boolean frontLeftDriveReverse = true;
-		public static boolean backLeftDriveDriveReverse = true;
-		public static boolean frontRightDriveReverse = false;
-		public static boolean backRightDriveReverse = false;
-
-		public boolean[] getDriveReversals() {
-			return new boolean[] {
-					frontLeftDriveReverse,
-					backLeftDriveDriveReverse,
-					frontRightDriveReverse,
-					backRightDriveReverse
-			};
-		}
-	}
-
-	@Config
-	public static class MentorShooterConfig extends ShooterConfig {
-		public static String intakeString = "intake";
-		public static String shooterString = "shooter";
-		public static String shooterDeliverString = "shooterDeliver";
-		public static String carouselDeliverString = "carouselDeliver";
-		public static String carouselString = "carousel";
-
-		@Override
-		public String getShooterString() {
-			return shooterString;
-		}
-
-		public static double[] shooterSpeeds = {0.8, 0.75, 0.7};
-		public static double[] shooterVoltages = {11, 11, 11};
-
-		public static double[] carouselPositions = {0, 0.5, 1};
-		public static double[] carouselDeliverPositions = {0, 0.5, 1};
-		public static double[] shooterDeliverPositions = {0, 0.5};
-
-		public static long intakeTime = 2000;
-
-		public double[] getShooterSpeeds() {
-			return shooterSpeeds;
-		}
-
-		public double[] getShooterVoltages() {
-			return shooterVoltages;
-		}
-
-		public double[] getShooterSpeedsCompensated() {
-			int numSpeeds = shooterSpeeds.length;
-			double[] compensated = new double[numSpeeds];
-
-			for (int i = 0; i < numSpeeds; i++) {
-				compensated[i] = shooterSpeeds[i] * shooterVoltages[i];
-			}
-
-			return compensated;
-		}
-	}
-
-	@Config
-	public static class MentorRRConfig extends RRConfig {
-		public static String rightOdomString = "RO";
-		public static String leftOdomString = MentorDriveConfig.frontLeftDriveString;
-		public static String frontOdomString = MentorDriveConfig.frontRightDriveString;
-
-		public String[] getOdomStrings() {
-			return new String[] {
-					rightOdomString,
-					leftOdomString,
-					frontOdomString
-			};
-		}
-
-		public static boolean rightOdomReverse = true;
-		public static boolean leftOdomReverse = false;
-		public static boolean frontOdomReverse = true;
-
-		public boolean[] getOdomReversals() {
-			return new boolean[] {
-					rightOdomReverse,
-					leftOdomReverse,
-					frontOdomReverse
-			};
-		}
-
-		public RevHubOrientationOnRobot.LogoFacingDirection getLogoDirection() {
-			return RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
-		}
-
-		public RevHubOrientationOnRobot.UsbFacingDirection getUSBDirection() {
-			return RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
-		}
-	}
-
-	@Config
-	public static class MentorLiftConfig {
-		public static String frontLiftString = "frontLift";
-		public static String rearLiftString = "rearLift";
-
-		public static boolean frontLiftReverse = true;
-		public static boolean rearLiftReverse = true;
-
-		public static double liftSpeed = 0.3;
-		public static int liftMax = 500;
-	}
-
 	public enum CarouselPos {
 		LEFT,
 		CENTER,
@@ -172,12 +57,13 @@ public class MentorBot extends Robot {
 	//Boolean to keep track of our threads
 	private static volatile boolean intakeBusy = false;
 
-	public static DriveConfig driveConfig = new MentorDriveConfig();
-	public static ShooterConfig shooterConfig = new MentorShooterConfig();
-	public static RRConfig rrConfig = new MentorRRConfig();
+	public DriveConfig driveConfig = new MentorDriveConfig();
+	public ShooterConfig shooterConfig = new MentorShooterConfig();
+	public RRConfig rrConfig = new MentorRRConfig();
+	public MentorLiftConfig liftConfig = new MentorLiftConfig();
 
 	public MentorBot(HardwareMap hwMap, Telemetry telem) {
-		super(hwMap, telem);
+		super(hwMap, telem, RobotType.MENTOR_BOT);
 
 		super.driveConfig = driveConfig;
 		super.shooterConfig = shooterConfig;
@@ -283,6 +169,8 @@ public class MentorBot extends Robot {
 			}
 		};
 
+		//TODO: Is this actually working the way we want it to?
+		// Try checking inside the thread if we are busy
 		//Make sure we don't create duplicate threads trying to do the same thing
 		if (!intakeBusy)
 			thread.start();

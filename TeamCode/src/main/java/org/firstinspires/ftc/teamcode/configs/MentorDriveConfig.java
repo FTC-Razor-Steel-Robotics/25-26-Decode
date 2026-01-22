@@ -1,0 +1,34 @@
+package org.firstinspires.ftc.teamcode.configs;
+
+import com.acmerobotics.dashboard.config.Config;
+
+@Config
+public class MentorDriveConfig extends DriveConfig {
+	public static String frontLeftDriveString = "FL/LO";
+	public static String backLeftDriveDriveString = "RL";
+	public static String frontRightDriveString = "FR/FO";
+	public static String backRightDriveString = "RR";
+
+	public String[] getDriveStrings() {
+		return new String[] {
+				frontLeftDriveString,
+				backLeftDriveDriveString,
+				frontRightDriveString,
+				backRightDriveString
+		};
+	}
+
+	public static boolean frontLeftDriveReverse = true;
+	public static boolean backLeftDriveDriveReverse = true;
+	public static boolean frontRightDriveReverse = false;
+	public static boolean backRightDriveReverse = false;
+
+	public boolean[] getDriveReversals() {
+		return new boolean[] {
+				frontLeftDriveReverse,
+				backLeftDriveDriveReverse,
+				frontRightDriveReverse,
+				backRightDriveReverse
+		};
+	}
+}
