@@ -1,13 +1,18 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-@Disabled
+
+
 @Autonomous(name="ADS", group="Linear OpMode")
 public class ADS_BLUE_FRONT extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
@@ -22,12 +27,60 @@ public class ADS_BLUE_FRONT extends LinearOpMode {
     public static double shooter_pre_B = .75;
     public static double shooter_pre_C = .7;
     double shooter_pre_slecter = 0;
-    public static double Start_B1_X=0 ;
-    public static double Start_B1_Y=0;
-    public static double Start_B1_H=0 ;
+    public static double Start_B1_X=-49.86 ;
+    public static double Start_B1_Y=-51.83;
+    public static double Start_B1_H=55 ;
+    public static double SPX=-5.90;
+    public static double SPY=-5.04;
+    public static double SPH=55;
+    public static double P1X=-11.64;
+    public static double PY=-50.20;
+    public static double PH=-90;
+    public static double P2X=0;
+
 
     @Override
     public void runOpMode() {
+        Pose2d Drive_from_start = new Pose2d(Start_B1_X, Start_B1_Y, Math.toRadians(Start_B1_H));
+        MecanumDrive drive = new MecanumDrive(hardwareMap,Drive_from_start);
+        waitForStart();
+        Actions.runBlocking(
+                drive.actionBuilder(Drive_from_start)
+                        .splineToConstantHeading(new Vector2d(SPX, SPY), Math.toRadians(SPH))
+                        .build());
+        Pose2d LP_P1 = new Pose2d(new Vector2d(SPX,SPY), Math.toRadians(SPH));
+        sleep(3000);
+        Actions.runBlocking(
+                drive.actionBuilder(LP_P1)
+                        .splineToLinearHeading(new Pose2d(P1X, SPY, Math.toRadians(PH)), Math.toRadians(PH))
+                        .splineToConstantHeading(new Vector2d(P1X, PY), Math.toRadians(PH))
+                        .build());
+        Pose2d P1_LP = new Pose2d(new Vector2d(P1X,PY), Math.toRadians(PH));
+        sleep(3000);
+        Actions.runBlocking(
+                drive.actionBuilder(P1_LP)
+                        .splineToConstantHeading(new Vector2d(P1X/2,SPY),Math.toRadians(PH))
+                        .splineToLinearHeading(new Pose2d(SPX,SPY, Math.toRadians(SPH)),Math.toRadians(SPH))
+                        .build());
+        sleep(3000);
+        Pose2d LP_P2 = new Pose2d(new Vector2d(SPX,SPY), Math.toRadians(SPH));
+        Actions.runBlocking(
+                drive.actionBuilder(LP_P2)
+                        .splineToLinearHeading(new Pose2d(P2X, SPY, Math.toRadians(PH)), Math.toRadians(PH))
+                        .splineToConstantHeading(new Vector2d(P2X, PY), Math.toRadians(PH))
+                        .build());
+        Pose2d P2_LP = new Pose2d(new Vector2d(P2X,PY), Math.toRadians(PH));
+        sleep(3000);
+        Actions.runBlocking(
+                drive.actionBuilder(P2_LP)
+                        .splineToConstantHeading(new Vector2d(P2X/2,SPY),Math.toRadians(PH))
+                        .splineToLinearHeading(new Pose2d(SPX,SPY, Math.toRadians(SPH)),Math.toRadians(SPH))
+                        .build());
+
+
+
+
+
 
     }
 }
