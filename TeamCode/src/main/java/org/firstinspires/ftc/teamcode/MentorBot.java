@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -119,12 +120,12 @@ public class MentorBot extends Robot {
 	}
 
 	//Shorthand function to intake into the current carousel selection
-	public void autoIntake() {
-		autoIntake(curCarouselPos);
+	public void autoIntake(Gamepad gamepad) {
+		autoIntake(curCarouselPos, gamepad);
 	}
 
 	//TODO: Utilize a sensor to determine when a ball has arrived in the carousel deliver
-	public void autoIntake(CarouselPos pos) {
+	public void autoIntake(CarouselPos pos, Gamepad gamepad) {
 		Thread thread = new Thread() {
 			@Override
 			public void run() {
@@ -155,7 +156,10 @@ public class MentorBot extends Robot {
 				robotSleep(250);
 				spinIntake(1);
 
-				robotSleep(MentorShooterConfig.intakeTime);
+				//Wait for the user to let go of the button
+				while (gamepad.dpad_up) {
+					robotSleep(1);
+				}
 
 				//Reset the carousel deliver position
 				moveCarouselDeliver(CarouselDeliverPos.CAROUSEL);
@@ -177,11 +181,11 @@ public class MentorBot extends Robot {
 	}
 
 	//Shorthand function to dispense the current carousel selection
-	public void autoDispense() {
-		autoDispense(curCarouselPos);
+	public void autoDispense(Gamepad gamepad) {
+		autoDispense(curCarouselPos, gamepad);
 	}
 
-	public void autoDispense(CarouselPos pos) {
+	public void autoDispense(CarouselPos pos, Gamepad gamepad) {
 		Thread thread = new Thread() {
 			@Override
 			public void run() {
@@ -210,7 +214,10 @@ public class MentorBot extends Robot {
 				moveCarouselDeliver(CarouselDeliverPos.INTAKE);
 				spinIntake(-1);
 
-				robotSleep(MentorShooterConfig.intakeTime);
+				//Wait for the user to let go of the button
+				while (gamepad.dpad_down) {
+					robotSleep(1);
+				}
 
 				//Reset the carousel deliver position
 				moveCarouselDeliver(CarouselDeliverPos.CAROUSEL);
@@ -251,6 +258,10 @@ public class MentorBot extends Robot {
 	public void moveCarouselDeliver(CarouselDeliverPos pos) {
 		carouselDeliver.setPosition(MentorShooterConfig.carouselDeliverPositions[pos.ordinal()]);
 		curCarouselDeliverPos = pos;
+	}
+
+	public void moveShooterDeliver(boolean pos) {
+		shooterDeliver.setPosition(pos ? 1 : 0);
 	}
 
 	public void moveLift(boolean up, boolean down) {
