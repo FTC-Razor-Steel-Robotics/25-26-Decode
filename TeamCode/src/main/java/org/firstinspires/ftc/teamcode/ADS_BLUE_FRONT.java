@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 
 @Config
+@Disabled
 @Autonomous(name="ADS_BLUE_FRONT", group="Linear OpMode")
 public class ADS_BLUE_FRONT extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
