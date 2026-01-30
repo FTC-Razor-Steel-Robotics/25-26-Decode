@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
@@ -12,8 +13,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 
-
-@Autonomous(name="ADS", group="Linear OpMode")
+@Config
+@Autonomous(name="ADS_BLUE_FRONT", group="Linear OpMode")
 public class ADS_BLUE_FRONT extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor Intake = null;
@@ -32,11 +33,11 @@ public class ADS_BLUE_FRONT extends LinearOpMode {
     public static double Start_B1_H=55 ;
     public static double SPX=-5.90;
     public static double SPY=-5.04;
-    public static double SPH=55;
+    public static double SPH=50;
     public static double P1X=-11.64;
-    public static double PY=-50.20;
-    public static double PH=-90;
-    public static double P2X=0;
+    public static double PY=-40.20;
+    public static double PH=-85;
+    public static double P2X=14.64;
 
 
     @Override
@@ -76,6 +77,14 @@ public class ADS_BLUE_FRONT extends LinearOpMode {
                         .splineToConstantHeading(new Vector2d(P2X/2,SPY),Math.toRadians(PH))
                         .splineToLinearHeading(new Pose2d(SPX,SPY, Math.toRadians(SPH)),Math.toRadians(SPH))
                         .build());
+        Pose2d LP_SP = new Pose2d(new Vector2d(SPX,SPY),Math.toRadians(SPH));
+        sleep(3000);
+        Actions.runBlocking(
+                drive.actionBuilder(LP_SP)
+                        .splineToLinearHeading(new Pose2d(P2X, PY, Math.toRadians(PH)), Math.toRadians(PH))
+                        .build());
+
+
 
 
 

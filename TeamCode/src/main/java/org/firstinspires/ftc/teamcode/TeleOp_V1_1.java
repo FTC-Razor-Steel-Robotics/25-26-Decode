@@ -94,11 +94,11 @@ public class TeleOp_V1_1 extends LinearOpMode {
         // to the names assigned during the robot configuration step on the DS or RC devices.
         frontLeftDrive = hardwareMap.get(DcMotor.class, "FL/LO");
         backLeftDrive = hardwareMap.get(DcMotor.class, "RL");
-        frontRightDrive = hardwareMap.get(DcMotor.class, "FR/RO");
-        backRightDrive = hardwareMap.get(DcMotor.class, "RR/BO");
-        Shooter=hardwareMap.get(DcMotor.class,"Shooter");
-        Intake=hardwareMap.get(DcMotor.class,"Intake");
-        Trigger=hardwareMap.get(Servo.class,"Trigger");
+        frontRightDrive = hardwareMap.get(DcMotor.class, "FR");
+        backRightDrive = hardwareMap.get(DcMotor.class, "RR");
+        Shooter = hardwareMap.get(DcMotor.class,"Shooter/BO");
+        Intake = hardwareMap.get(DcMotor.class,"Intake/RO");
+        Trigger = hardwareMap.get(Servo.class,"Trigger");
 
 
         // ########################################################################################
