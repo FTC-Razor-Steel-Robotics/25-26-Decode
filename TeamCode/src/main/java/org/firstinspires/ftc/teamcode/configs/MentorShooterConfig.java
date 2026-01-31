@@ -31,15 +31,4 @@ public class MentorShooterConfig extends ShooterConfig {
 	public double[] getShooterVoltages() {
 		return shooterVoltages;
 	}
-
-	public double[] getShooterSpeedsCompensated() {
-		int numSpeeds = shooterSpeeds.length;
-		double[] compensated = new double[numSpeeds];
-
-		for (int i = 0; i < numSpeeds; i++) {
-			compensated[i] = shooterSpeeds[i] * shooterVoltages[i];
-		}
-
-		return compensated;
-	}
 }

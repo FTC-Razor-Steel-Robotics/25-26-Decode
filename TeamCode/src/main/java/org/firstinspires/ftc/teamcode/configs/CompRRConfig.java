@@ -5,9 +5,9 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 
 @Config
 public class CompRRConfig extends RRConfig {
-	public static String rightOdomString = CompDriveConfig.frontRightDriveString;
+	public static String rightOdomString = CompShooterConfig.intakeString;
 	public static String leftOdomString = CompDriveConfig.frontLeftDriveString;
-	public static String backOdomString = CompDriveConfig.backRightDriveString;
+	public static String backOdomString = CompShooterConfig.shooterString;
 
 	public String[] getOdomStrings() {
 		return new String[] {
@@ -17,7 +17,7 @@ public class CompRRConfig extends RRConfig {
 		};
 	}
 
-	public static boolean rightOdomReverse = false;
+	public static boolean rightOdomReverse = true;
 	public static boolean leftOdomReverse = true;
 	public static boolean backOdomReverse = true;
 
@@ -29,8 +29,8 @@ public class CompRRConfig extends RRConfig {
 		};
 	}
 
-	public static RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
-	public static RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
+	public static RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
+	public static RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
 	public RevHubOrientationOnRobot.LogoFacingDirection getLogoDirection() {
 		return logoDirection;
@@ -41,9 +41,9 @@ public class CompRRConfig extends RRConfig {
 	}
 
 	// drive model parameters
-	public static double inPerTick = 0.0029896297219022;
-	public static double lateralInPerTick = 0.002419514733748738;
-	public static double trackWidthTicks = 4405.155613027317;
+	public static double inPerTick = 120 / 61000.0;
+	public static double lateralInPerTick = 89.29099050274306;
+	public static double trackWidthTicks = 6150.0861944927665;
 
 	public double[] getDriveModelParameters() {
 		return new double[] {
@@ -54,8 +54,8 @@ public class CompRRConfig extends RRConfig {
 	}
 
 	// feedforward parameters (in tick units)
-	public static double kS = 0.8319519029079201;
-	public static double kV = 0.0005838996390539436;
+	public static double kS = 0.9775425545276475;
+	public static double kV = 0.0003677962896007073;
 	public static double kA = 0.0001;
 
 	public double[] getFeedforwardParameters() {
@@ -111,9 +111,9 @@ public class CompRRConfig extends RRConfig {
 	}
 
 	//Dead Wheel Localizer
-	public static double par0YTicks = 2043.6521470013683; // y position of the first parallel encoder (in tick units)
-	public static double par1YTicks = -1917.608446695452; // y position of the second parallel encoder (in tick units)
-	public static double perpXTicks = -2282.596153108052; // x position of the perpendicular encoder (in tick units)
+	public static double par0YTicks = 1; // y position of the first parallel encoder (in tick units)
+	public static double par1YTicks = 1; // y position of the second parallel encoder (in tick units)
+	public static double perpXTicks = 1; // x position of the perpendicular encoder (in tick units)
 
 	public double[] getLocalizerVals() {
 		return new double[] {

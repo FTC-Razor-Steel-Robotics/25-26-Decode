@@ -6,14 +6,29 @@ import com.acmerobotics.dashboard.config.Config;
 public class CompDriveConfig extends DriveConfig {
 	public static String frontLeftDriveString = "FL/LO";
 	public static String backLeftDriveDriveString = "RL";
-	public static String frontRightDriveString = "FR/RO";
-	public static String backRightDriveString = "RR/BO";
+	public static String frontRightDriveString = "FR";
+	public static String backRightDriveString = "RR";
 
 	public String[] getDriveStrings() {
-		return new String[0];
+		return new String[] {
+				frontLeftDriveString,
+				backLeftDriveDriveString,
+				frontRightDriveString,
+				backRightDriveString
+		};
 	}
 
+	public static boolean frontLeftDriveReverse = false;
+	public static boolean backLeftDriveDriveReverse = true;
+	public static boolean frontRightDriveReverse = false;
+	public static boolean backRightDriveReverse = true;
+
 	public boolean[] getDriveReversals() {
-		return new boolean[0];
+		return new boolean[] {
+				frontLeftDriveReverse,
+				backLeftDriveDriveReverse,
+				frontRightDriveReverse,
+				backRightDriveReverse
+		};
 	}
 }
