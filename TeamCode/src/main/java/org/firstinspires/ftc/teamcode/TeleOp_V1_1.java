@@ -80,9 +80,9 @@ public class TeleOp_V1_1 extends LinearOpMode {
     private DcMotor frontRightDrive = null;
     private DcMotor backRightDrive = null;
     private Servo Trigger = null;
-    public static double shooter_pre_A = .95;
-    public static double shooter_pre_B = .85;
-    public static double shooter_pre_C = .8;
+    public static double shooter_pre_A = .9;
+    public static double shooter_pre_B = .8;
+    public static double shooter_pre_C = .75;
     double shooter_pre_slecter = 0;
 
 

@@ -23,9 +23,7 @@ public class AUTO_V05 extends LinearOpMode {
     private DcMotor frontRightDrive = null;
     private DcMotor backRightDrive = null;
     private Servo Trigger = null;
-    public static double shooter_pre_A = .95;
-    public static double shooter_pre_B = .75;
-    public static double shooter_pre_C = .7;
+    public static double shooter_pre_A = .89;
     double shooter_pre_slecter = 0;
     public static int sleep_timer=2500;
 
@@ -55,10 +53,10 @@ public class AUTO_V05 extends LinearOpMode {
         // when you first test your robot, push the left joystick forward and observe the direction the wheels turn.
         // Reverse the direction (flip FORWARD <-> REVERSE ) of any wheel that runs backward
         // Keep testing until ALL the wheels move the robot forward when you push the left joystick forward.
-        frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
-        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
-        backRightDrive.setDirection(DcMotor.Direction.REVERSE);
+		frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
+		backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+		frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
+		backRightDrive.setDirection(DcMotor.Direction.REVERSE);
         Shooter.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // Wait for the game to start (driver presses START)
