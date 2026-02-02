@@ -309,8 +309,11 @@ public final class MecanumDrive {
     }
 
 	public MecanumDrive(HardwareMap hardwareMap, Pose2d pose) {
-		this(hardwareMap, pose, Robot.DEFAULT_ROBOT_TYPE == Robot.RobotType.COMP_BOT ?
-				new CompBot(hardwareMap, null) : new MentorBot(hardwareMap, null));
+		this(hardwareMap, pose,
+				Robot.getRobotType(hardwareMap) == Robot.RobotType.COMP_BOT ?
+				new CompBot(hardwareMap, null) :
+				new MentorBot(hardwareMap, null)
+		);
 	}
 
     public void setDrivePowers(PoseVelocity2d powers) {

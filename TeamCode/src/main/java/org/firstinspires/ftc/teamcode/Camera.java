@@ -54,7 +54,7 @@ public class Camera {
 				.build();
 
 		//TODO: Figure out what this value should be set to initially
-//		setDecimation(3);
+//		setDecimation(2);
 
 		// Create the vision portal by using a builder.
 		VisionPortal.Builder builder = new VisionPortal.Builder();

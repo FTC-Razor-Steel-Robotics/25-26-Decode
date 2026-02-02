@@ -56,7 +56,7 @@ public class MentorBot extends Robot {
 	private Servo carousel;
 
 	//Boolean to keep track of our threads
-	private static volatile boolean intakeBusy = false;
+	public volatile boolean intakeBusy = false;
 
 	public DriveConfig driveConfig = new MentorDriveConfig();
 	public ShooterConfig shooterConfig = new MentorShooterConfig();
@@ -64,7 +64,7 @@ public class MentorBot extends Robot {
 	public MentorLiftConfig liftConfig = new MentorLiftConfig();
 
 	public MentorBot(HardwareMap hwMap, Telemetry telem) {
-		super(hwMap, telem, RobotType.MENTOR_BOT);
+		super(hwMap, telem);
 
 		super.driveConfig = driveConfig;
 		super.shooterConfig = shooterConfig;
@@ -89,11 +89,10 @@ public class MentorBot extends Robot {
 
 		carousel = hardwareMap.get(Servo.class, MentorShooterConfig.carouselString);
 
+		moveShooterDeliver(false);
 		moveCarouselDeliver(CarouselDeliverPos.CAROUSEL);
-
 		//Allow time for the carousel deliver to get out of the way
 		robotSleep(250);
-
 		moveCarousel(CarouselPos.CENTER);
 	}
 

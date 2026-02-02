@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.app.Activity;
+import android.widget.TextView;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -12,15 +15,16 @@ import org.firstinspires.ftc.teamcode.configs.DriveConfig;
 import org.firstinspires.ftc.teamcode.configs.RRConfig;
 import org.firstinspires.ftc.teamcode.configs.ShooterConfig;
 
-@Config
 public abstract class Robot {
 	public enum RobotType {
 		COMP_BOT,
 		MENTOR_BOT
 	}
 
-	public static RobotType DEFAULT_ROBOT_TYPE = RobotType.MENTOR_BOT;
-	public final RobotType robotType;
+	public static final String MENTOR_CONFIG_STR = "Mentor 25-26";
+	public static final String COMP_CONFIG_STR = "Something something";
+
+	public static RobotType robotType;
 
 	//Create instances of our configs
 	public DriveConfig driveConfig;
@@ -32,6 +36,8 @@ public abstract class Robot {
 	protected HardwareMap hardwareMap;
 	protected Telemetry telemetry;
 
+	Camera camera;
+
 	protected DcMotor frontLeftDrive;
 	protected DcMotor backLeftDrive;
 	protected DcMotor frontRightDrive;
@@ -41,15 +47,19 @@ public abstract class Robot {
 
 	protected DcMotorEx shooter;
 
-	protected Robot(HardwareMap hwMap, Telemetry telem, RobotType type) {
+	protected Robot(HardwareMap hwMap, Telemetry telem) {
 		//Create copies of the hardware map and telemetry so we can use them throughout the class
 		hardwareMap = hwMap;
 		telemetry = telem;
 
-		robotType = type;
+		//Ensure our robot type is initialized
+		getRobotType(hardwareMap);
 
 		//Initialize our voltage sensor
 		voltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
+
+//		camera = new Camera(hardwareMap, telemetry, true);
+//		camera.startCameraStream();
 	}
 
 	protected void initDrive() {
@@ -109,26 +119,61 @@ public abstract class Robot {
 		backLeftDrive.setPower(backLeftPower);
 		backRightDrive.setPower(backRightPower);
 
-		telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
-		telemetry.addData("Back  left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
+//		telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
+//		telemetry.addData("Back left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
 	}
 
+	//TODO: Get rid of toggleSpeed once we get the camera working
 	public void fireShooter(boolean spin, boolean toggleSpeed) {
-		//Cycle through the array and go back to 0 if we reach the end
 		if (toggleSpeed) {
+			//Cycle through the array and go back to 0 if we reach the end
 			if (++shooterSpeedIndex >= shooterConfig.getShooterSpeeds().length)
 				shooterSpeedIndex = 0;
 		}
 
 		double shooterSpeedCompensated = shooterConfig.getShooterSpeedsCompensated()[shooterSpeedIndex];
-		telemetry.addData("Battery Voltage", voltageSensor.getVoltage());
-		telemetry.addData("Shooter Speed", shooterSpeedCompensated / voltageSensor.getVoltage());
-		telemetry.addData("Shooter Speed Compensated", shooterSpeedCompensated);
+//		telemetry.addData("Battery Voltage", voltageSensor.getVoltage());
+//		telemetry.addData("Shooter Speed", shooterSpeedCompensated / voltageSensor.getVoltage());
+		telemetry.addData("Target Speed * Voltage", shooterSpeedCompensated);
 
 		shooter.setPower(spin ? shooterSpeedCompensated / voltageSensor.getVoltage() : 0);
 	}
 
 	public abstract void spinIntake(double speed);
+
+	protected static String configFile = "";
+
+	public static RobotType getRobotType(HardwareMap hardwareMap) {
+		if (robotType == null) {
+			Activity activity = (Activity) hardwareMap.appContext;
+
+			//Retrieving the config name is hit or miss, so we'll loop until we have it
+			while (configFile.isEmpty()) {
+				activity.runOnUiThread(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						TextView activeConfTxtView = (TextView) activity.findViewById(R.id.idActiveConfigName);
+						configFile = activeConfTxtView.getText().toString();
+					}
+				});
+			}
+		}
+
+		switch (configFile) {
+			case MENTOR_CONFIG_STR:
+				robotType = RobotType.MENTOR_BOT;
+				break;
+			case COMP_CONFIG_STR:
+				robotType = RobotType.COMP_BOT;
+				break;
+			default:
+				robotType = null;
+		}
+
+		return robotType;
+	}
 
 	//Easier sleep function that doesn't need to be encapsulated in a try/catch
 	//Hopefully ignoring the exception won't come to bite back

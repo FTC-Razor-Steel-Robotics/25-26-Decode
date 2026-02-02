@@ -24,7 +24,7 @@ public class CompBot extends Robot {
 	public static RRConfig rrConfig = new CompRRConfig();
 
 	public CompBot(HardwareMap hwMap, Telemetry telem) {
-		super(hwMap, telem, RobotType.COMP_BOT);
+		super(hwMap, telem);
 
 		//Initialize drive motors
 		frontLeftDrive = hardwareMap.get(DcMotor.class, CompDriveConfig.frontLeftDriveString);

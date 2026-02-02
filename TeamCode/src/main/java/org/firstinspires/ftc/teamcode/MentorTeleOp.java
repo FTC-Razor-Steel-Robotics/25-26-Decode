@@ -2,11 +2,19 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.configs.MentorLiftConfig;
+
+import java.util.List;
 
 @TeleOp(name = "Mentor TeleOp", group = "Mentor")
 public class MentorTeleOp extends LinearOpMode {
@@ -14,13 +22,26 @@ public class MentorTeleOp extends LinearOpMode {
 
 	MentorBot robot;
 
+	Limelight3A limelight;
+
+	IMU imu;
+
 	@Override
 	public void runOpMode() {
 		telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
 		robot = new MentorBot(hardwareMap, telemetry);
 
-		// Wait for the game to start (driver presses START)
+		Robot.getRobotType(hardwareMap);
+		telemetry.addData("Active configuration", Robot.configFile);
+
+		limelight = hardwareMap.get(Limelight3A.class, "limelight");
+		limelight.setPollRateHz(100);
+		limelight.pipelineSwitch(0);
+		limelight.start();
+
+		imu = hardwareMap.get(IMU.class, "imu");
+
 		telemetry.addData("Status", "Initialized");
 		telemetry.update();
 
@@ -34,11 +55,27 @@ public class MentorTeleOp extends LinearOpMode {
 		boolean dpadRightPrev = false;
 
 		while (opModeIsActive()) {
+			//Sensor fusion with our IMU to get better position estimates
+//			limelight.updateRobotOrientation(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+
+			//TODO: Reject positioning if we see obelisk tags
+			LLResult result = limelight.getLatestResult();
+			if (result != null && result.isValid()) {
+				Pose3D pose = result.getBotpose();
+				//For use with sensor fusion
+//				Pose3D pose = result.getBotpose_MT2();
+
+				List<LLResultTypes.FiducialResult> fiducials = result.getFiducialResults();
+				for (LLResultTypes.FiducialResult fiducial : fiducials) {
+					int id = fiducial.getFiducialId();
+					double distance = fiducial.getRobotPoseTargetSpace().getPosition().z;
+					telemetry.addData("Fiducial " + id, -distance * 39.37007874015748031496  + " in away");
+				}
+			}
+
 			robot.driveMecanum(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
 
 			//Shooter
-			telemetry.addData("Bumper cur", gamepad1.right_bumper);
-			telemetry.addData("Bumper prev", rightBumperPrev);
 			robot.fireShooter(gamepad1.right_trigger > 0.5, gamepad1.right_bumper && !rightBumperPrev);
 
 			robot.moveShooterDeliver(gamepad1.a);
@@ -49,10 +86,13 @@ public class MentorTeleOp extends LinearOpMode {
 			else if (gamepad1.dpad_down && !dpadDownPrev)
 				robot.autoDispense(gamepad1);
 
-			if (gamepad1.b)
-				robot.moveCarouselDeliver(MentorBot.CarouselDeliverPos.SHOOTER);
-			else
-				robot.moveCarouselDeliver(MentorBot.CarouselDeliverPos.CAROUSEL);
+			//Only allow carousel deliver to move if we are not running our auto intake or dispense
+			if (!robot.intakeBusy) {
+				if (gamepad1.b)
+					robot.moveCarouselDeliver(MentorBot.CarouselDeliverPos.SHOOTER);
+				else
+					robot.moveCarouselDeliver(MentorBot.CarouselDeliverPos.CAROUSEL);
+			}
 
 			robot.cycleCarousel(gamepad1.dpad_left && !dpadLeftPrev,
 								gamepad1.dpad_right && !dpadRightPrev);
