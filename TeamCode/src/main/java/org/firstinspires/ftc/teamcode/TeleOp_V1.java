@@ -33,7 +33,7 @@ public class TeleOp_V1 extends LinearOpMode {
         while (opModeIsActive()) {
 			robot.driveMecanum(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
 
-			robot.fireShooter(gamepad2.left_bumper, gamepad2.right_bumper && !right_bumper_prev);
+			robot.fireShooter(gamepad2.left_bumper, 0);
 			right_bumper_prev = gamepad2.right_bumper;
 
 			robot.moveTrigger(gamepad2.right_trigger > 0.2);

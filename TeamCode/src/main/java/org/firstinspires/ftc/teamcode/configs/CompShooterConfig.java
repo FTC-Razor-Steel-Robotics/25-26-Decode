@@ -8,6 +8,12 @@ public class CompShooterConfig extends ShooterConfig {
 	public static String intakeString = "Intake/RO";
 	public static String triggerString = "Trigger";
 
+	public static boolean shooterReversed = true;
+
+	public boolean getShooterReversed() {
+		return shooterReversed;
+	}
+
 	public static double[] shooterSpeeds = {0.8, 0.75, 0.7};
 	public static double[] shooterVoltages = {11, 11, 11};
 

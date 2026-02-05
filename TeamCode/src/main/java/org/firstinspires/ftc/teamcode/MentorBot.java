@@ -76,8 +76,10 @@ public class MentorBot extends Robot {
 	}
 
 	public void initShooter() {
+		//Initialize shooter motor
 		super.initShooter();
 
+		//Initialize intake system
 		shooterDeliver = hardwareMap.get(Servo.class, MentorShooterConfig.shooterDeliverString);
 		shooterDeliver.setDirection(Servo.Direction.REVERSE);
 

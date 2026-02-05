@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.configs;
 
 public abstract class ShooterConfig {
 	public abstract String getShooterString();
+	public abstract boolean getShooterReversed();
 	public abstract double[] getShooterSpeeds();
 	public abstract double[] getShooterVoltages();
 	//TODO: Replace this with an equation once we get the camera working

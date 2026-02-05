@@ -89,10 +89,16 @@ public abstract class Robot {
 	protected void initShooter() {
 		shooter = hardwareMap.get(DcMotorEx.class, shooterConfig.getShooterString());
 		shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-		shooter.setDirection(DcMotorSimple.Direction.REVERSE);
+		shooter.setDirection(shooterConfig.getShooterReversed() ?
+				DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD);
 	}
 
 	public void driveMecanum(double axial, double lateral, double yaw) {
+		//If no max speed specified, set it to 1
+		driveMecanum(axial, lateral, yaw, 1);
+	}
+
+	public void driveMecanum(double axial, double lateral, double yaw, double maxSpeed) {
 		// Combine the joystick requests for each axis-motion to determine each wheel's power.
 		// Set up a variable for each drive wheel to save the power level for telemetry.
 		double frontLeftPower  = axial + lateral + yaw;
@@ -114,24 +120,30 @@ public abstract class Robot {
 			backRightPower  /= max;
 		}
 
-		frontLeftDrive.setPower(frontLeftPower);
-		frontRightDrive.setPower(frontRightPower);
-		backLeftDrive.setPower(backLeftPower);
-		backRightDrive.setPower(backRightPower);
+		frontLeftDrive.setPower(frontLeftPower * maxSpeed);
+		frontRightDrive.setPower(frontRightPower * maxSpeed);
+		backLeftDrive.setPower(backLeftPower * maxSpeed);
+		backRightDrive.setPower(backRightPower * maxSpeed);
 
 //		telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
 //		telemetry.addData("Back left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
 	}
 
-	//TODO: Get rid of toggleSpeed once we get the camera working
-	public void fireShooter(boolean spin, boolean toggleSpeed) {
-		if (toggleSpeed) {
-			//Cycle through the array and go back to 0 if we reach the end
-			if (++shooterSpeedIndex >= shooterConfig.getShooterSpeeds().length)
-				shooterSpeedIndex = 0;
+	//TODO: Get rid of speedIndex once we get the camera working
+	public void fireShooter(boolean spin, int speedIndex) {
+//		if (toggleSpeed) {
+//			//Cycle through the array and go back to 0 if we reach the end
+//			if (++shooterSpeedIndex >= shooterConfig.getShooterSpeeds().length)
+//				shooterSpeedIndex = 0;
+//		}
+
+		if (speedIndex > shooterConfig.getShooterSpeeds().length || speedIndex < 0) {
+			telemetry.addData("Incorrect Speed Index", speedIndex);
+			speedIndex = shooterConfig.getShooterSpeeds().length;
 		}
 
-		double shooterSpeedCompensated = shooterConfig.getShooterSpeedsCompensated()[shooterSpeedIndex];
+//		double shooterSpeedCompensated = shooterConfig.getShooterSpeedsCompensated()[shooterSpeedIndex];
+		double shooterSpeedCompensated = shooterConfig.getShooterSpeedsCompensated()[speedIndex];
 //		telemetry.addData("Battery Voltage", voltageSensor.getVoltage());
 //		telemetry.addData("Shooter Speed", shooterSpeedCompensated / voltageSensor.getVoltage());
 		telemetry.addData("Target Speed * Voltage", shooterSpeedCompensated);

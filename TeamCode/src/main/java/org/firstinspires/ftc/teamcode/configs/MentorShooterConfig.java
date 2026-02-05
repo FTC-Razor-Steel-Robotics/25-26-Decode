@@ -15,6 +15,12 @@ public class MentorShooterConfig extends ShooterConfig {
 		return shooterString;
 	}
 
+	public static boolean shooterReversed = true;
+
+	public boolean getShooterReversed() {
+		return shooterReversed;
+	}
+
 	public static double[] shooterSpeeds = {0.8, 0.75, 0.7};
 	public static double[] shooterVoltages = {11, 11, 11};
 

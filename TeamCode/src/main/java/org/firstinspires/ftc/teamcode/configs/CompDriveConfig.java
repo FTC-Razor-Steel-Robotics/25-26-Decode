@@ -31,4 +31,6 @@ public class CompDriveConfig extends DriveConfig {
 				backRightDriveReverse
 		};
 	}
+
+	public static double slowSpeed = 0.5;
 }

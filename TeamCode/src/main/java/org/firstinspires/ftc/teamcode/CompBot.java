@@ -26,36 +26,24 @@ public class CompBot extends Robot {
 	public CompBot(HardwareMap hwMap, Telemetry telem) {
 		super(hwMap, telem);
 
-		//Initialize drive motors
-		frontLeftDrive = hardwareMap.get(DcMotor.class, CompDriveConfig.frontLeftDriveString);
-		backLeftDrive = hardwareMap.get(DcMotor.class, CompDriveConfig.backLeftDriveDriveString);
-		frontRightDrive = hardwareMap.get(DcMotor.class, CompDriveConfig.frontRightDriveString);
-		backRightDrive = hardwareMap.get(DcMotor.class, CompDriveConfig.backRightDriveString);
-
-		frontLeftDrive.setDirection(DcMotor.Direction.FORWARD);
-		backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-		frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
-		backRightDrive.setDirection(DcMotor.Direction.REVERSE);
-
-		frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		backLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		frontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-		backRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-		//Initialize the other motors
-		shooter = hardwareMap.get(DcMotorEx.class, CompShooterConfig.shooterString);
-		intake = hardwareMap.get(DcMotor.class, CompShooterConfig.intakeString);
-
-		shooter.setDirection(DcMotorSimple.Direction.REVERSE);
-
-		trigger = hardwareMap.get(Servo.class, CompShooterConfig.triggerString);
+		initDrive();
+		initShooter();
 
 		//Set servo default positions
 		moveTrigger(false);
 	}
 
-	public void spinIntake(double speed) {
+	public void initShooter() {
+		//Initialize shooter motor
+		super.initShooter();
 
+		//Initialize other hardware
+		intake = hardwareMap.get(DcMotor.class, CompShooterConfig.intakeString);
+		trigger = hardwareMap.get(Servo.class, CompShooterConfig.triggerString);
+	}
+
+	public void spinIntake(double speed) {
+		intake.setPower(speed);
 	}
 
 	public void moveTrigger(boolean up) {
@@ -67,8 +55,6 @@ public class CompBot extends Robot {
 	}
 
 	public void setIntakeSpeed(double speed) {
-		telemetry.addData("Intake Speed", speed);
-
 		intake.setPower(speed);
 	}
 }

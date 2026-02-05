@@ -54,6 +54,8 @@ public class MentorTeleOp extends LinearOpMode {
 		boolean dpadLeftPrev = false;
 		boolean dpadRightPrev = false;
 
+		int shooterSpeedIndex = 0;
+
 		while (opModeIsActive()) {
 			//Sensor fusion with our IMU to get better position estimates
 //			limelight.updateRobotOrientation(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
@@ -69,14 +71,20 @@ public class MentorTeleOp extends LinearOpMode {
 				for (LLResultTypes.FiducialResult fiducial : fiducials) {
 					int id = fiducial.getFiducialId();
 					double distance = fiducial.getRobotPoseTargetSpace().getPosition().z;
-					telemetry.addData("Fiducial " + id, -distance * 39.37007874015748031496  + " in away");
+					telemetry.addData("Fiducial " + id, -distance * 39.37007874015748031496  + " inches away");
 				}
 			}
 
 			robot.driveMecanum(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
 
 			//Shooter
-			robot.fireShooter(gamepad1.right_trigger > 0.5, gamepad1.right_bumper && !rightBumperPrev);
+			if (gamepad1.right_bumper && !rightBumperPrev) {
+				//Cycle through the array and go back to 0 if we reach the end
+				if (++shooterSpeedIndex >= robot.shooterConfig.getShooterSpeeds().length)
+					shooterSpeedIndex = 0;
+			}
+
+			robot.fireShooter(gamepad1.right_trigger > 0.5, shooterSpeedIndex);
 
 			robot.moveShooterDeliver(gamepad1.a);
 
