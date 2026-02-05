@@ -31,6 +31,7 @@ public class CompTeleOp extends LinearOpMode {
 
 		double driveSpeed = 1;
 		int shooterSpeedIndex = 0;
+		boolean spinShooter = false;
 
 		while (opModeIsActive()) {
 			//Drive
@@ -54,9 +55,11 @@ public class CompTeleOp extends LinearOpMode {
 			}
 
 			if (gamepad2.dpad_up)
-				robot.fireShooter(true, shooterSpeedIndex);
+				spinShooter = true;
 			else if (gamepad2.dpad_down)
-				robot.fireShooter(false, shooterSpeedIndex);
+				spinShooter = false;
+
+			robot.fireShooter(spinShooter, shooterSpeedIndex);
 
 			robot.moveTrigger(gamepad2.right_trigger > 0.2);
 
