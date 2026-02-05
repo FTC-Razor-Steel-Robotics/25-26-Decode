@@ -51,20 +51,46 @@ public class ADS_BLUE_FRONT extends LinearOpMode {
                         .splineToConstantHeading(new Vector2d(SPX, SPY), Math.toRadians(SPH))
                         .build());
         Pose2d LP_P1 = new Pose2d(new Vector2d(SPX,SPY), Math.toRadians(SPH));
-        sleep(3000);
+        for (int i = 0; i < 2; i++) {
+            Shooter.setPower(shooter_pre_B);
+            sleep(2000);
+            Trigger.setPosition(1);
+            sleep(500);
+            Trigger.setPosition(0);
+            sleep(500);
+            Intake.setPower(1);
+            sleep(500);
+            Intake.setPower(0);
+        }
+        Shooter.setPower(0);
+        Intake.setPower(1);
         Actions.runBlocking(
                 drive.actionBuilder(LP_P1)
                         .splineToLinearHeading(new Pose2d(P1X, SPY, Math.toRadians(PH)), Math.toRadians(PH))
                         .splineToConstantHeading(new Vector2d(P1X, PY), Math.toRadians(PH))
                         .build());
         Pose2d P1_LP = new Pose2d(new Vector2d(P1X,PY), Math.toRadians(PH));
-        sleep(3000);
+        Intake.setPower(0);
+        sleep(500);
         Actions.runBlocking(
                 drive.actionBuilder(P1_LP)
                         .splineToConstantHeading(new Vector2d(P1X/2,SPY),Math.toRadians(PH))
                         .splineToLinearHeading(new Pose2d(SPX,SPY, Math.toRadians(SPH)),Math.toRadians(SPH))
                         .build());
-        sleep(3000);
+        for (int i = 0; i < 2; i++) {
+            Shooter.setPower(shooter_pre_B);
+            sleep(2000);
+            Trigger.setPosition(1);
+            sleep(500);
+            Trigger.setPosition(0);
+            sleep(500);
+            Intake.setPower(1);
+            sleep(500);
+            Intake.setPower(0);
+        }
+        Shooter.setPower(0);
+        Intake.setPower(1);
+
         Pose2d LP_P2 = new Pose2d(new Vector2d(SPX,SPY), Math.toRadians(SPH));
         Actions.runBlocking(
                 drive.actionBuilder(LP_P2)
@@ -72,14 +98,26 @@ public class ADS_BLUE_FRONT extends LinearOpMode {
                         .splineToConstantHeading(new Vector2d(P2X, PY), Math.toRadians(PH))
                         .build());
         Pose2d P2_LP = new Pose2d(new Vector2d(P2X,PY), Math.toRadians(PH));
-        sleep(3000);
+        sleep(500);
+        Intake.setPower(0);
         Actions.runBlocking(
                 drive.actionBuilder(P2_LP)
                         .splineToConstantHeading(new Vector2d(P2X/2,SPY),Math.toRadians(PH))
                         .splineToLinearHeading(new Pose2d(SPX,SPY, Math.toRadians(SPH)),Math.toRadians(SPH))
                         .build());
         Pose2d LP_SP = new Pose2d(new Vector2d(SPX,SPY),Math.toRadians(SPH));
-        sleep(3000);
+        for (int i = 0; i < 2; i++) {
+            Shooter.setPower(shooter_pre_B);
+            sleep(2000);
+            Trigger.setPosition(1);
+            sleep(500);
+            Trigger.setPosition(0);
+            sleep(500);
+            Intake.setPower(1);
+            sleep(500);
+            Intake.setPower(0);
+        }
+        Shooter.setPower(0);
         Actions.runBlocking(
                 drive.actionBuilder(LP_SP)
                         .splineToLinearHeading(new Pose2d(P2X, PY, Math.toRadians(PH)), Math.toRadians(PH))
