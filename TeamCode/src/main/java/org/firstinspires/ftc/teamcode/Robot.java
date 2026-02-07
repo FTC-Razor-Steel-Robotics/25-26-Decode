@@ -1,0 +1,190 @@
+package org.firstinspires.ftc.teamcode;
+
+import android.app.Activity;
+import android.widget.TextView;
+
+import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.configs.DriveConfig;
+import org.firstinspires.ftc.teamcode.configs.RRConfig;
+import org.firstinspires.ftc.teamcode.configs.ShooterConfig;
+
+public abstract class Robot {
+	public enum RobotType {
+		COMP_BOT,
+		MENTOR_BOT
+	}
+
+	public static final String MENTOR_CONFIG_STR = "Mentor 25-26";
+	public static final String COMP_CONFIG_STR = "Something something";
+
+	public static RobotType robotType;
+
+	//Create instances of our configs
+	public DriveConfig driveConfig;
+	public ShooterConfig shooterConfig;
+	public RRConfig rrConfig;
+
+	protected int shooterSpeedIndex = 0;
+
+	protected HardwareMap hardwareMap;
+	protected Telemetry telemetry;
+
+	Camera camera;
+
+	protected DcMotor frontLeftDrive;
+	protected DcMotor backLeftDrive;
+	protected DcMotor frontRightDrive;
+	protected DcMotor backRightDrive;
+
+	protected VoltageSensor voltageSensor;
+
+	protected DcMotorEx shooter;
+
+	protected Robot(HardwareMap hwMap, Telemetry telem) {
+		//Create copies of the hardware map and telemetry so we can use them throughout the class
+		hardwareMap = hwMap;
+		telemetry = telem;
+
+		//Ensure our robot type is initialized
+		getRobotType(hardwareMap);
+
+		//Initialize our voltage sensor
+		voltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
+
+//		camera = new Camera(hardwareMap, telemetry, true);
+//		camera.startCameraStream();
+	}
+
+	protected void initDrive() {
+		//Initialize drive motors
+		String[] driveStrings = driveConfig.getDriveStrings();
+		frontLeftDrive = hardwareMap.get(DcMotor.class, driveStrings[0]);
+		backLeftDrive = hardwareMap.get(DcMotor.class, driveStrings[1]);
+		frontRightDrive = hardwareMap.get(DcMotor.class, driveStrings[2]);
+		backRightDrive = hardwareMap.get(DcMotor.class, driveStrings[3]);
+
+		boolean[] driveReversals = driveConfig.getDriveReversals();
+		frontLeftDrive.setDirection(driveReversals[0] ?
+				DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD);
+		backLeftDrive.setDirection(driveReversals[1] ?
+				DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD);
+		frontRightDrive.setDirection(driveReversals[2] ?
+				DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD);
+		backRightDrive.setDirection(driveReversals[3] ?
+				DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD);
+
+		frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		backLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		frontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+		backRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+	}
+
+	protected void initShooter() {
+		shooter = hardwareMap.get(DcMotorEx.class, shooterConfig.getShooterString());
+		shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+		shooter.setDirection(shooterConfig.getShooterReversed() ?
+				DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD);
+	}
+
+	public void driveMecanum(double axial, double lateral, double yaw) {
+		//If no max speed specified, set it to 1
+		driveMecanum(axial, lateral, yaw, 1);
+	}
+
+	public void driveMecanum(double axial, double lateral, double yaw, double maxSpeed) {
+		// Combine the joystick requests for each axis-motion to determine each wheel's power.
+		// Set up a variable for each drive wheel to save the power level for telemetry.
+		double frontLeftPower  = axial + lateral + yaw;
+		double frontRightPower = axial - lateral - yaw;
+		double backLeftPower   = axial - lateral + yaw;
+		double backRightPower  = axial + lateral - yaw;
+
+		// Normalize the values so no wheel power exceeds 100%
+		// This ensures that the robot maintains the desired motion.
+		double max;
+		max = Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower));
+		max = Math.max(max, Math.abs(backLeftPower));
+		max = Math.max(max, Math.abs(backRightPower));
+
+		if (max > 1.0) {
+			frontLeftPower  /= max;
+			frontRightPower /= max;
+			backLeftPower   /= max;
+			backRightPower  /= max;
+		}
+
+		frontLeftDrive.setPower(frontLeftPower * maxSpeed);
+		frontRightDrive.setPower(frontRightPower * maxSpeed);
+		backLeftDrive.setPower(backLeftPower * maxSpeed);
+		backRightDrive.setPower(backRightPower * maxSpeed);
+
+//		telemetry.addData("Front left/Right", "%4.2f, %4.2f", frontLeftPower, frontRightPower);
+//		telemetry.addData("Back left/Right", "%4.2f, %4.2f", backLeftPower, backRightPower);
+	}
+
+	//TODO: Get rid of speedIndex once we get the camera working
+	public void fireShooter(boolean spin, int speedIndex) {
+		if (speedIndex > shooterConfig.getShooterSpeeds().length || speedIndex < 0) {
+			telemetry.addData("Incorrect Speed Index", speedIndex);
+			return;
+		}
+
+		double shooterSpeedCompensated = shooterConfig.getShooterSpeedsCompensated()[speedIndex];
+		telemetry.addData("Battery Voltage", voltageSensor.getVoltage());
+		telemetry.addData("Shooter Speed", shooterSpeedCompensated / voltageSensor.getVoltage());
+		telemetry.addData("Target Speed * Voltage", shooterSpeedCompensated);
+
+		shooter.setPower(spin ? shooterSpeedCompensated / voltageSensor.getVoltage() : 0);
+	}
+
+	public abstract void spinIntake(double speed);
+
+	protected static String configFile = "";
+
+	public static RobotType getRobotType(HardwareMap hardwareMap) {
+		if (robotType == null) {
+			Activity activity = (Activity) hardwareMap.appContext;
+
+			//Retrieving the config name is hit or miss, so we'll loop until we have it
+			while (configFile.isEmpty()) {
+				activity.runOnUiThread(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						TextView activeConfTxtView = (TextView) activity.findViewById(R.id.idActiveConfigName);
+						configFile = activeConfTxtView.getText().toString();
+					}
+				});
+			}
+		}
+
+		switch (configFile) {
+			case MENTOR_CONFIG_STR:
+				robotType = RobotType.MENTOR_BOT;
+				break;
+			case COMP_CONFIG_STR:
+				robotType = RobotType.COMP_BOT;
+				break;
+			default:
+				robotType = null;
+		}
+
+		return robotType;
+	}
+
+	//Easier sleep function that doesn't need to be encapsulated in a try/catch
+	//Hopefully ignoring the exception won't come to bite back
+	protected void robotSleep(long ms) {
+		try {
+			Thread.sleep(ms);
+		} catch (InterruptedException e) {}
+	}
+}

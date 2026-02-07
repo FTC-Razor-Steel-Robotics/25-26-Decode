@@ -22,10 +22,12 @@ import org.firstinspires.ftc.teamcode.messages.ThreeDeadWheelInputsMessage;
 @Config
 public final class ThreeDeadWheelLocalizer implements Localizer {
     public static class Params {
-        public double par0YTicks = 2703.335894607798; // y position of the first parallel encoder (in tick units)
-        public double par1YTicks = -2881.313955751553; // y position of the second parallel encoder (in tick units)
-        public double perpXTicks = -2596.2550563461687; // x position of the perpendicular encoder (in tick units)
+        public double par0YTicks; // y position of the first parallel encoder (in tick units)
+        public double par1YTicks; // y position of the second parallel encoder (in tick units)
+        public double perpXTicks; // x position of the perpendicular encoder (in tick units)
     }
+
+	Robot robot;
 
     public static Params PARAMS = new Params();
 
@@ -37,18 +39,35 @@ public final class ThreeDeadWheelLocalizer implements Localizer {
     private boolean initialized;
     private Pose2d pose;
 
-    public ThreeDeadWheelLocalizer(HardwareMap hardwareMap, double inPerTick, Pose2d initialPose) {
+    public ThreeDeadWheelLocalizer(HardwareMap hardwareMap, double inPerTick, Pose2d initialPose, Robot rob) {
+		robot = rob;
+
         // TODO: make sure your config has **motors** with these names (or change them)
         //   the encoders should be plugged into the slot matching the named motor
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
-        par0 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "Intake/RO")));
-        par1 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "FL/LO")));
-        perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "Shooter/BO")));
+
+		String[] odomStrings = robot.rrConfig.getOdomStrings();
+
+		par0 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, odomStrings[0])));
+		par1 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, odomStrings[1])));
+		perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, odomStrings[2])));
 
         // TODO: reverse encoder directions if needed
-        par1.setDirection(DcMotorSimple.Direction.REVERSE);
-        perp.setDirection(DcMotorSimple.Direction.REVERSE);
-        par0.setDirection(DcMotorSimple.Direction.REVERSE);
+        //   par0.setDirection(DcMotorSimple.Direction.REVERSE);
+		boolean[] odomReversals = robot.rrConfig.getOdomReversals();
+
+		par0.setDirection(odomReversals[0] ?
+				DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD);
+		par1.setDirection(odomReversals[1] ?
+				DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD);
+		perp.setDirection(odomReversals[2] ?
+				DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD);
+
+		double[] localizerVals = robot.rrConfig.getLocalizerVals();
+
+		PARAMS.par0YTicks = localizerVals[0]; // y position of the first parallel encoder (in tick units)
+		PARAMS.par1YTicks = localizerVals[1]; // y position of the second parallel encoder (in tick units)
+		PARAMS.perpXTicks = localizerVals[2]; // x position of the perpendicular encoder (in tick units)
 
         this.inPerTick = inPerTick;
 
