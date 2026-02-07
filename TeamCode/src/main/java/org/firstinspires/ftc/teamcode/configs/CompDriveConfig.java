@@ -33,4 +33,5 @@ public class CompDriveConfig extends DriveConfig {
 	}
 
 	public static double slowSpeed = 0.5;
+	public static double superSlowSpeed = 0.25;
 }

@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.configs.CompDriveConfig;
 
-@TeleOp(name = "Competition TeleOp", group = "Competition")
+@TeleOp(name="Competition TeleOp", group="Competition")
 public class CompTeleOp extends LinearOpMode {
 	private ElapsedTime runtime = new ElapsedTime();
 
@@ -34,6 +34,8 @@ public class CompTeleOp extends LinearOpMode {
 			//Drive
 			if (gamepad1.left_bumper)
 				driveSpeed = CompDriveConfig.slowSpeed;
+			else if (gamepad1.right_bumper)
+				driveSpeed = CompDriveConfig.superSlowSpeed;
 			else
 				driveSpeed = 1;
 
