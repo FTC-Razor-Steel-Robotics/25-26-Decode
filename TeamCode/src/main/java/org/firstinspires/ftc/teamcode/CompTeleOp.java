@@ -20,9 +20,6 @@ public class CompTeleOp extends LinearOpMode {
 
 		robot = new CompBot(hardwareMap, telemetry);
 
-		Robot.getRobotType(hardwareMap);
-		telemetry.addData("Active configuration", Robot.configFile);
-
 		telemetry.addData("Status", "Initialized");
 		telemetry.update();
 
@@ -45,13 +42,13 @@ public class CompTeleOp extends LinearOpMode {
 			//Shooter
 			if (gamepad2.x) {
 				shooterSpeedIndex = 0;
-				telemetry.addLine("shooter setting FAR");
+				telemetry.addData("Shooter setting", "FAR");
 			} else if (gamepad2.a) {
 				shooterSpeedIndex = 1;
-				telemetry.addLine("shooter setting MED");
+				telemetry.addData("Shooter setting", "MED");
 			} else if (gamepad2.b) {
 				shooterSpeedIndex = 2;
-				telemetry.addLine("shooter setting CLOSE");
+				telemetry.addData("Shooter setting", "CLOSE");
 			}
 
 			if (gamepad2.dpad_up)
@@ -64,6 +61,9 @@ public class CompTeleOp extends LinearOpMode {
 			robot.moveTrigger(gamepad2.right_trigger > 0.2);
 
 			robot.spinIntake(-gamepad2.left_stick_y);
+
+			telemetry.addData("Status", "Run Time: " + runtime.toString());
+			telemetry.update();
 		}
 	}
 }

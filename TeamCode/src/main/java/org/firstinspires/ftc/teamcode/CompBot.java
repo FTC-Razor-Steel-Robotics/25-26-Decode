@@ -26,6 +26,10 @@ public class CompBot extends Robot {
 	public CompBot(HardwareMap hwMap, Telemetry telem) {
 		super(hwMap, telem);
 
+		super.driveConfig = driveConfig;
+		super.shooterConfig = shooterConfig;
+		super.rrConfig = rrConfig;
+
 		initDrive();
 		initShooter();
 

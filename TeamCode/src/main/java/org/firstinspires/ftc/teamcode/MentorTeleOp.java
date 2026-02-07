@@ -32,9 +32,6 @@ public class MentorTeleOp extends LinearOpMode {
 
 		robot = new MentorBot(hardwareMap, telemetry);
 
-		Robot.getRobotType(hardwareMap);
-		telemetry.addData("Active configuration", Robot.configFile);
-
 		limelight = hardwareMap.get(Limelight3A.class, "limelight");
 		limelight.setPollRateHz(100);
 		limelight.pipelineSwitch(0);

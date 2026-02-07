@@ -131,21 +131,14 @@ public abstract class Robot {
 
 	//TODO: Get rid of speedIndex once we get the camera working
 	public void fireShooter(boolean spin, int speedIndex) {
-//		if (toggleSpeed) {
-//			//Cycle through the array and go back to 0 if we reach the end
-//			if (++shooterSpeedIndex >= shooterConfig.getShooterSpeeds().length)
-//				shooterSpeedIndex = 0;
-//		}
-
 		if (speedIndex > shooterConfig.getShooterSpeeds().length || speedIndex < 0) {
 			telemetry.addData("Incorrect Speed Index", speedIndex);
-			speedIndex = shooterConfig.getShooterSpeeds().length;
+			return;
 		}
 
-//		double shooterSpeedCompensated = shooterConfig.getShooterSpeedsCompensated()[shooterSpeedIndex];
 		double shooterSpeedCompensated = shooterConfig.getShooterSpeedsCompensated()[speedIndex];
-//		telemetry.addData("Battery Voltage", voltageSensor.getVoltage());
-//		telemetry.addData("Shooter Speed", shooterSpeedCompensated / voltageSensor.getVoltage());
+		telemetry.addData("Battery Voltage", voltageSensor.getVoltage());
+		telemetry.addData("Shooter Speed", shooterSpeedCompensated / voltageSensor.getVoltage());
 		telemetry.addData("Target Speed * Voltage", shooterSpeedCompensated);
 
 		shooter.setPower(spin ? shooterSpeedCompensated / voltageSensor.getVoltage() : 0);
