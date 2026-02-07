@@ -8,14 +8,14 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 
-@Config
-@Disabled
+
 @Autonomous(name="ADS_BLUE_FRONT", group="Linear OpMode")
+@Config
 public class ADS_BLUE_FRONT extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor Intake = null;
@@ -35,14 +35,18 @@ public class ADS_BLUE_FRONT extends LinearOpMode {
     public static double SPX=-5.90;
     public static double SPY=-5.04;
     public static double SPH=50;
-    public static double P1X=-11.64;
+    public static double P1X=-13.64;
     public static double PY=-40.20;
     public static double PH=-85;
-    public static double P2X=14.64;
+    public static double P2X=11.64;
 
 
     @Override
     public void runOpMode() {
+
+        Shooter = hardwareMap.get(DcMotor.class,"Shooter/BO");
+        Intake = hardwareMap.get(DcMotor.class,"Intake/RO");
+        Trigger = hardwareMap.get(Servo.class,"Trigger");
         Pose2d Drive_from_start = new Pose2d(Start_B1_X, Start_B1_Y, Math.toRadians(Start_B1_H));
         MecanumDrive drive = new MecanumDrive(hardwareMap,Drive_from_start);
         waitForStart();
@@ -51,16 +55,17 @@ public class ADS_BLUE_FRONT extends LinearOpMode {
                         .splineToConstantHeading(new Vector2d(SPX, SPY), Math.toRadians(SPH))
                         .build());
         Pose2d LP_P1 = new Pose2d(new Vector2d(SPX,SPY), Math.toRadians(SPH));
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 4; i++) {
             Shooter.setPower(shooter_pre_B);
-            sleep(2000);
-            Trigger.setPosition(1);
-            sleep(500);
-            Trigger.setPosition(0);
-            sleep(500);
-            Intake.setPower(1);
-            sleep(500);
-            Intake.setPower(0);
+                sleep(4000);
+                Trigger.setPosition(.8);
+                sleep(3000);
+                Trigger.setPosition(0);
+                sleep(1000);
+                Intake.setPower(1);
+                sleep(1000);
+                Intake.setPower(0);
+
         }
         Shooter.setPower(0);
         Intake.setPower(1);
@@ -77,16 +82,16 @@ public class ADS_BLUE_FRONT extends LinearOpMode {
                         .splineToConstantHeading(new Vector2d(P1X/2,SPY),Math.toRadians(PH))
                         .splineToLinearHeading(new Pose2d(SPX,SPY, Math.toRadians(SPH)),Math.toRadians(SPH))
                         .build());
-        for (int i = 0; i < 2; i++) {
-            Shooter.setPower(shooter_pre_B);
-            sleep(2000);
-            Trigger.setPosition(1);
-            sleep(500);
-            Trigger.setPosition(0);
-            sleep(500);
-            Intake.setPower(1);
-            sleep(500);
-            Intake.setPower(0);
+        for (int i = 0; i < 4; i++) {
+
+                sleep(3000);
+                Trigger.setPosition(1);
+                sleep(1000);
+                Trigger.setPosition(0);
+                sleep(1000);
+                Intake.setPower(1);
+                sleep(1000);
+                Intake.setPower(0);
         }
         Shooter.setPower(0);
         Intake.setPower(1);
@@ -106,16 +111,15 @@ public class ADS_BLUE_FRONT extends LinearOpMode {
                         .splineToLinearHeading(new Pose2d(SPX,SPY, Math.toRadians(SPH)),Math.toRadians(SPH))
                         .build());
         Pose2d LP_SP = new Pose2d(new Vector2d(SPX,SPY),Math.toRadians(SPH));
-        for (int i = 0; i < 2; i++) {
-            Shooter.setPower(shooter_pre_B);
-            sleep(2000);
-            Trigger.setPosition(1);
-            sleep(500);
-            Trigger.setPosition(0);
-            sleep(500);
-            Intake.setPower(1);
-            sleep(500);
-            Intake.setPower(0);
+        for (int i = 0; i < 4; i++) {
+                sleep(1000);
+                Trigger.setPosition(1);
+                sleep(1000);
+                Trigger.setPosition(0);
+                sleep(1000);
+                Intake.setPower(1);
+                sleep(1000);
+                Intake.setPower(0);
         }
         Shooter.setPower(0);
         Actions.runBlocking(
