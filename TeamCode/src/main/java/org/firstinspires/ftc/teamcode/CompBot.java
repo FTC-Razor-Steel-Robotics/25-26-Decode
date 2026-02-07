@@ -53,7 +53,7 @@ public class CompBot extends Robot {
 	public void moveTrigger(boolean up) {
 		double triggerPos = up ? CompShooterConfig.triggerUpPos
 				: CompShooterConfig.triggerDownPos;
-		telemetry.addData("Trigger Pos", triggerPos);
+//		telemetry.addData("Trigger Pos", triggerPos);
 
 		trigger.setPosition(triggerPos);
 	}

@@ -19,7 +19,7 @@ public class CompDriveConfig extends DriveConfig {
 	}
 
 	public static boolean frontLeftDriveReverse = false;
-	public static boolean backLeftDriveDriveReverse = true;
+	public static boolean backLeftDriveDriveReverse = false;
 	public static boolean frontRightDriveReverse = true;
 	public static boolean backRightDriveReverse = true;
 

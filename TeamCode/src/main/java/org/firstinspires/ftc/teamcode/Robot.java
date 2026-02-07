@@ -22,7 +22,7 @@ public abstract class Robot {
 	}
 
 	public static final String MENTOR_CONFIG_STR = "Mentor 25-26";
-	public static final String COMP_CONFIG_STR = "Something something";
+	public static final String COMP_CONFIG_STR = "2025-2026";
 
 	public static RobotType robotType;
 

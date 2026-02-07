@@ -14,7 +14,7 @@ public class CompShooterConfig extends ShooterConfig {
 		return shooterReversed;
 	}
 
-	public static double[] shooterSpeeds = {0.85, 0.8, 0.75};
+	public static double[] shooterSpeeds = {0.875, 0.8, 0.75};
 	public static double[] shooterVoltages = {12.5, 12.5, 12.5};
 
 	public static double triggerUpPos = 1;

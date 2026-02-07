@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous
 @Config
@@ -23,9 +24,10 @@ public class AUTO_V05 extends LinearOpMode {
     private DcMotor frontRightDrive = null;
     private DcMotor backRightDrive = null;
     private Servo Trigger = null;
-    public static double shooter_pre_A = .89;
+    public static double shooter_pre_A = 0.875 * 12.5;
     double shooter_pre_slecter = 0;
-    public static int sleep_timer=2500;
+    VoltageSensor voltageSensor;
+    public static int sleep_timer=1000;
 
 
     @Override
@@ -34,6 +36,9 @@ public class AUTO_V05 extends LinearOpMode {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
+
+        //Initialize our voltage sensor
+        voltageSensor = hardwareMap.get(VoltageSensor.class, "Control Hub");
         frontLeftDrive = hardwareMap.get(DcMotor.class, "FL/LO");
         backLeftDrive = hardwareMap.get(DcMotor.class, "RL");
         frontRightDrive = hardwareMap.get(DcMotor.class, "FR");
@@ -65,8 +70,9 @@ public class AUTO_V05 extends LinearOpMode {
         Trigger.setPosition(0);
 
         waitForStart();
+        sleep(8000);
         runtime.reset();
-        Shooter.setPower(shooter_pre_A);
+        Shooter.setPower(shooter_pre_A / voltageSensor.getVoltage());
         sleep(5000);
 //        Trigger.setPosition(1);
 //        sleep(1000);
@@ -81,6 +87,7 @@ public class AUTO_V05 extends LinearOpMode {
 //        Trigger.setPosition(0);
 
         for (int i = 0; i < 3; i++) {
+            Shooter.setPower(shooter_pre_A / voltageSensor.getVoltage());
             sleep(1000);
             Trigger.setPosition(1);
             sleep(1000);
@@ -94,13 +101,13 @@ public class AUTO_V05 extends LinearOpMode {
         }
 
 
-        sleep(2000);
+        sleep(0000);
         Shooter.setPower(0);
 
-        backLeftDrive.setPower(.2);
-        backRightDrive.setPower(-.2);
-        frontLeftDrive.setPower(-.2);
-        frontRightDrive.setPower(-.2);
+        backLeftDrive.setPower(.5);
+        backRightDrive.setPower(-.5);
+        frontLeftDrive.setPower(-.5);
+        frontRightDrive.setPower(-.5);
         sleep(sleep_timer);
         backLeftDrive.setPower(0);
         backRightDrive.setPower(0);
