@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.configs.CompDriveConfig;
+import org.firstinspires.ftc.teamcode.configs.CompShooterConfig;
 
 @TeleOp(name="Competition TeleOp", group="Competition")
 public class CompTeleOp extends LinearOpMode {
@@ -58,7 +59,8 @@ public class CompTeleOp extends LinearOpMode {
 			else if (gamepad2.dpad_down)
 				spinShooter = false;
 
-			robot.fireShooter(spinShooter, shooterSpeedIndex);
+//			robot.fireShooter(spinShooter, shooterSpeedIndex);
+			robot.fireShooterDistance(spinShooter, CompShooterConfig.testDistance);
 
 			robot.moveTrigger(gamepad1.right_trigger > 0.2 && gamepad2.right_trigger > 0.2);
 

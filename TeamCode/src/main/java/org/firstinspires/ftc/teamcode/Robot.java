@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import android.app.Activity;
 import android.widget.TextView;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -137,6 +136,15 @@ public abstract class Robot {
 		}
 
 		double shooterSpeedCompensated = shooterConfig.getShooterSpeedsCompensated()[speedIndex];
+		telemetry.addData("Battery Voltage", voltageSensor.getVoltage());
+		telemetry.addData("Shooter Speed", shooterSpeedCompensated / voltageSensor.getVoltage());
+		telemetry.addData("Target Speed * Voltage", shooterSpeedCompensated);
+
+		shooter.setPower(spin ? shooterSpeedCompensated / voltageSensor.getVoltage() : 0);
+	}
+
+	public void fireShooterDistance(boolean spin, double distance) {
+		double shooterSpeedCompensated = shooterConfig.getSpeedOverDistance() * distance + shooterConfig.getSpeedIntercept();
 		telemetry.addData("Battery Voltage", voltageSensor.getVoltage());
 		telemetry.addData("Shooter Speed", shooterSpeedCompensated / voltageSensor.getVoltage());
 		telemetry.addData("Target Speed * Voltage", shooterSpeedCompensated);
