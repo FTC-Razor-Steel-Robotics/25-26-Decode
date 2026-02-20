@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -17,6 +20,7 @@ import org.firstinspires.ftc.teamcode.configs.ShooterConfig;
 
 public class CompBot extends Robot {
 	private Servo trigger;
+    private Servo Guard;
 	private DcMotor intake;
 
 	public static DriveConfig driveConfig = new CompDriveConfig();
@@ -35,6 +39,7 @@ public class CompBot extends Robot {
 
 		//Set servo default positions
 		moveTrigger(false);
+        moveGuard(false);
 	}
 
 	public void initShooter() {
@@ -44,18 +49,24 @@ public class CompBot extends Robot {
 		//Initialize other hardware
 		intake = hardwareMap.get(DcMotor.class, CompShooterConfig.intakeString);
 		trigger = hardwareMap.get(Servo.class, CompShooterConfig.triggerString);
+        Guard = hardwareMap.get(Servo.class,CompShooterConfig.guardString);
 	}
+
 
 	public void spinIntake(double speed) {
 		intake.setPower(speed);
 	}
 
 	public void moveTrigger(boolean up) {
-		double triggerPos = up ? CompShooterConfig.triggerUpPos
-				: CompShooterConfig.triggerDownPos;
+        double triggerPos = up ? CompShooterConfig.triggerDownPos
+                : CompShooterConfig.triggerUpPos;
 //		telemetry.addData("Trigger Pos", triggerPos);
-
-		trigger.setPosition(triggerPos);
+        trigger.setPosition(triggerPos);
+    }
+    public void moveGuard(boolean up){
+        double Clear = up ? CompShooterConfig.GuardDown
+                : CompShooterConfig.GuardUp;
+        Guard.setPosition(Clear);
 	}
 
 	public void setIntakeSpeed(double speed) {
