@@ -41,9 +41,9 @@ public class CompRRConfig extends RRConfig {
 	}
 
 	// drive model parameters
-	public static double inPerTick = 120 / 61000.0;
-	public static double lateralInPerTick = 89.29099050274306;
-	public static double trackWidthTicks = 6150.0861944927665;
+	public static double inPerTick = 124.5 / 63287.0;
+	public static double lateralInPerTick = 96.52719045739337;
+	public static double trackWidthTicks = 6016.977356143655;
 
 	public double[] getDriveModelParameters() {
 		return new double[] {
@@ -54,8 +54,8 @@ public class CompRRConfig extends RRConfig {
 	}
 
 	// feedforward parameters (in tick units)
-	public static double kS = 0.9775425545276475;
-	public static double kV = 0.0003677962896007073;
+	public static double kS = 0.9717333671322006;
+	public static double kV = 0.0003585535804278568;
 	public static double kA = 0.0001;
 
 	public double[] getFeedforwardParameters() {
@@ -67,9 +67,9 @@ public class CompRRConfig extends RRConfig {
 	}
 
 	// path profile parameters (in inches)
-	public static double maxWheelVel = 50;
+	public static double maxWheelVel = 25;
 	public static double minProfileAccel = -30;
-	public static double maxProfileAccel = 50;
+	public static double maxProfileAccel = 25;
 
 	public double[] getPathProfileParameters() {
 		return new double[] {
@@ -91,12 +91,12 @@ public class CompRRConfig extends RRConfig {
 	}
 
 	// path controller gains
-	public static double axialGain = 4;
-	public static double lateralGain = .5;
-	public static double headingGain = 1; // shared with turn
+	public static double axialGain = 5;
+	public static double lateralGain = 10;
+	public static double headingGain = 5; // shared with turn
 
 	public static double axialVelGain = 2.0;
-	public static double lateralVelGain = 0.5;
+	public static double lateralVelGain = 1;
 	public static double headingVelGain = 1.0; // shared with turn
 
 	public double[] getPathControllerGains() {
@@ -111,9 +111,9 @@ public class CompRRConfig extends RRConfig {
 	}
 
 	//Dead Wheel Localizer
-	public static double par0YTicks = 2703.335894607798; // y position of the first parallel encoder (in tick units)
-	public static double par1YTicks = -2881.313955751553; // y position of the second parallel encoder (in tick units)
-	public static double perpXTicks = -2596.2550563461687; // x position of the perpendicular encoder (in tick units)
+	public static double par0YTicks = 2944.84188909968; // y position of the first parallel encoder (in tick units)
+	public static double par1YTicks = -2658.6208566924624; // y position of the second parallel encoder (in tick units)
+	public static double perpXTicks = -3112.300196425731; // x position of the perpendicular encoder (in tick units)
 
 	public double[] getLocalizerVals() {
 		return new double[] {
