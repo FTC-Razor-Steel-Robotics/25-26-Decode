@@ -43,6 +43,7 @@ public class CompTeleOp extends LinearOpMode {
 		double driveSpeed = 1;
 		int shooterSpeedIndex = 0;
 		boolean spinShooter = false;
+		double triggerStart = 0;
 
 		double prevCameraTime = runtime.milliseconds();
 		double curCameraTime;
@@ -52,8 +53,6 @@ public class CompTeleOp extends LinearOpMode {
 
 		pid.setSetpoint(0);
 		pid.setOutputLimits(-1, 1);
-
-		robot.guard.setPosition(0);
 
 		waitForStart();
 		runtime.reset();
