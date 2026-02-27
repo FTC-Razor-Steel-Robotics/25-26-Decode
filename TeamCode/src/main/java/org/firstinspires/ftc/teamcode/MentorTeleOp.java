@@ -69,7 +69,9 @@ public class MentorTeleOp extends LinearOpMode {
 				for (LLResultTypes.FiducialResult fiducial : fiducials) {
 					int id = fiducial.getFiducialId();
 					double distance = fiducial.getRobotPoseTargetSpace().getPosition().z;
+					double angle = fiducial.getTargetPoseRobotSpace().getOrientation().getYaw(AngleUnit.DEGREES);
 					telemetry.addData("Fiducial " + id, -distance * 39.37007874015748031496  + " inches away");
+					telemetry.addData("Fiducial " + id, angle + " degrees");
 				}
 			}
 

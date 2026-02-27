@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.configs.ShooterConfig;
 public class CompBot extends Robot {
 	private Servo trigger;
 	private DcMotor intake;
+	public Servo guard;
 
 	public static DriveConfig driveConfig = new CompDriveConfig();
 	public static ShooterConfig shooterConfig = new CompShooterConfig();
@@ -44,6 +45,7 @@ public class CompBot extends Robot {
 		//Initialize other hardware
 		intake = hardwareMap.get(DcMotor.class, CompShooterConfig.intakeString);
 		trigger = hardwareMap.get(Servo.class, CompShooterConfig.triggerString);
+		guard = hardwareMap.get(Servo.class, CompShooterConfig.guardString);
 	}
 
 	public void spinIntake(double speed) {

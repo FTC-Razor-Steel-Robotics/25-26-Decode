@@ -45,4 +45,5 @@ public class MentorShooterConfig extends ShooterConfig {
 	public double[] getShooterVoltages() {
 		return shooterVoltages;
 	}
+
 }

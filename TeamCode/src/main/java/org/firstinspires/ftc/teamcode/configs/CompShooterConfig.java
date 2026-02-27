@@ -7,6 +7,7 @@ public class CompShooterConfig extends ShooterConfig {
 	public static String shooterString = "Shooter/BO";
 	public static String intakeString = "Intake/RO";
 	public static String triggerString = "Trigger";
+	public static String guardString = "Guard";
 
 	public static boolean shooterReversed = true;
 
@@ -43,4 +44,8 @@ public class CompShooterConfig extends ShooterConfig {
 	public double[] getShooterVoltages() {
 		return shooterVoltages;
 	}
+
+	public static double kP = 0.03;
+	public static double kI = 0;
+	public static double kD = 0.3;
 }
