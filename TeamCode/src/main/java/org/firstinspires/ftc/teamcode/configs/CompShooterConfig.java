@@ -18,6 +18,20 @@ public class CompShooterConfig extends ShooterConfig {
 	public static double[] shooterSpeeds = {0.645, 0.55, 0.5};
 	public static double[] shooterVoltages = {12.5, 12.5, 12.5};
 
+//	public static double speedOverDistance = 0.012228260869565;
+	public static double speedOverDistance = 0.020304568527919;
+//	public static double speedIntercept = 9.372282608695652;
+	public static double speedIntercept = 5.719860406091371;
+	public static double testDistance = 40;
+
+	public double getSpeedOverDistance() {
+		return speedOverDistance;
+	}
+
+	public double getSpeedIntercept() {
+		return speedIntercept;
+	}
+
 	public static double triggerUpPos = 1;
 	public static double triggerDownPos = 0;
     public static double GuardUp=1;
@@ -35,4 +49,8 @@ public class CompShooterConfig extends ShooterConfig {
 	public double[] getShooterVoltages() {
 		return shooterVoltages;
 	}
+
+	public static double kP = 0.03;
+	public static double kI = 0;
+	public static double kD = 0.3;
 }

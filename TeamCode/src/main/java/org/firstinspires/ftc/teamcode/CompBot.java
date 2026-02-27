@@ -52,7 +52,6 @@ public class CompBot extends Robot {
         Guard = hardwareMap.get(Servo.class,CompShooterConfig.guardString);
 	}
 
-
 	public void spinIntake(double speed) {
 		intake.setPower(speed);
 	}

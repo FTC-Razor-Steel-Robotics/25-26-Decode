@@ -24,6 +24,14 @@ public class MentorShooterConfig extends ShooterConfig {
 	public static double[] shooterSpeeds = {0.8, 0.75, 0.7};
 	public static double[] shooterVoltages = {11, 11, 11};
 
+	public double getSpeedOverDistance() {
+		return 0;
+	}
+
+	public double getSpeedIntercept() {
+		return 0;
+	}
+
 	public static double[] carouselPositions = {0, 0.5, 1};
 	public static double[] carouselDeliverPositions = {0, 0.5, 1};
 	public static double[] shooterDeliverPositions = {0, 0.5};
@@ -37,4 +45,5 @@ public class MentorShooterConfig extends ShooterConfig {
 	public double[] getShooterVoltages() {
 		return shooterVoltages;
 	}
+
 }

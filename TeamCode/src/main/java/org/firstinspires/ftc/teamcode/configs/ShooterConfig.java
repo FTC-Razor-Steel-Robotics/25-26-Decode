@@ -5,6 +5,8 @@ public abstract class ShooterConfig {
 	public abstract boolean getShooterReversed();
 	public abstract double[] getShooterSpeeds();
 	public abstract double[] getShooterVoltages();
+	public abstract double getSpeedOverDistance();
+	public abstract double getSpeedIntercept();
 	//TODO: Replace this with an equation once we get the camera working
 	public double[] getShooterSpeedsCompensated() {
 		double[] shooterSpeeds = getShooterSpeeds();
