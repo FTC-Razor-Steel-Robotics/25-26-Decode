@@ -118,7 +118,7 @@ public class CompTeleOp extends LinearOpMode {
 			else if (gamepad2.dpad_down)
 				spinShooter = false;
 
-//			robot.fireShooter(spinShooter, shooterSpeedIndex);
+//			robot.fireShooter(spinShooter, 0);
 			robot.fireShooterDistance(spinShooter, cameraDistance);
 
 			robot.moveTrigger(!(gamepad1.right_trigger > 0.2 && gamepad2.right_trigger > 0.2));
