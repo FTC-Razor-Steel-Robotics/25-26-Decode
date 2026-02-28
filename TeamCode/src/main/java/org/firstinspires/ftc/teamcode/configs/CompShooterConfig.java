@@ -8,6 +8,7 @@ public class CompShooterConfig extends ShooterConfig {
 	public static String intakeString = "Intake/RO";
 	public static String triggerString = "Trigger";
     public static String guardString = "Guard";
+	public static String greenLEDString = "redLED";
 
 	public static boolean shooterReversed = true;
 

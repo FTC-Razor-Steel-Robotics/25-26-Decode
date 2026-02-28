@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -18,6 +19,7 @@ public class Camera {
 	private HardwareMap hardwareMap;
 	private Telemetry telemetry;
 	Limelight3A limelight;
+	public DigitalChannel redLED;
 
 	ElapsedTime runtime;
 
@@ -37,6 +39,9 @@ public class Camera {
 		hardwareMap = hwMap;
 		telemetry = telem;
 		runtime = rt;
+
+		redLED = hardwareMap.get(DigitalChannel.class, CompShooterConfig.greenLEDString);
+		redLED.setMode(DigitalChannel.Mode.OUTPUT);
 
 		limelight = hardwareMap.get(Limelight3A.class, "limelight");
 		limelight.setPollRateHz(CameraConfig.pollRateHz);
@@ -72,7 +77,7 @@ public class Camera {
 				int id = fiducial.getFiducialId();
 
 				//Ensure we are only finding the tag we want
-				if (id != targetID) {
+				if (id == targetID) {
 					cameraDistance = fiducial.getRobotPoseTargetSpace().getPosition().z;
 					cameraAngle = fiducial.getTargetXDegrees();
 
@@ -83,6 +88,13 @@ public class Camera {
 				}
 			}
 		}
+
+		updateLED();
+	}
+
+	public void updateLED() {
+		//The LED is active low, so set its value to false when we find a target
+		redLED.setState(!targetFound);
 	}
 
 	public double getTurnPower() {
