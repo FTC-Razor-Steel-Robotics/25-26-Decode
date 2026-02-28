@@ -14,8 +14,8 @@ import org.firstinspires.ftc.teamcode.configs.CompShooterConfig;
 import org.firstinspires.ftc.teamcode.configs.PIDController;
 
 
-@Autonomous(name="ADS_Blue_close", group="Linear OpMode")
-public class ADS_Close_Blue extends LinearOpMode {
+@Autonomous(name="ADS_Red_close", group="Linear OpMode")
+public class ADS_Close_Red extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     CompBot robot;
     Limelight3A limelight;
@@ -28,9 +28,9 @@ public class ADS_Close_Blue extends LinearOpMode {
 
         robot = new CompBot(hardwareMap, telemetry);
         camera = new Camera(hardwareMap, telemetry, runtime);
+        camera.targetID = camera.RED_ID;
 
-
-        Pose2d Drive_from_start = new Pose2d(-67, -15, Math.toRadians(90));
+        Pose2d Drive_from_start = new Pose2d(-67, 39, Math.toRadians(270));
         MecanumDrive drive = new MecanumDrive(hardwareMap,Drive_from_start);
 
         boolean spinShooter = false;
@@ -40,94 +40,114 @@ public class ADS_Close_Blue extends LinearOpMode {
         waitForStart();
         camera.update();
         spinShooter = true;
-        robot.fireShooterDistance(spinShooter, 45);
-        sleep(2500);
+        robot.fireShooterDistance(spinShooter, 55);
+        Actions.runBlocking(
+                drive.actionBuilder(Drive_from_start)
+                        .strafeTo(new Vector2d(-67,9))
+                        .build()
+        );
+
         robot.moveGuard(true);
         sleep(400);
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 2; i++) {
             robot.spinIntake(1);
             sleep(200);
             robot.spinIntake(0);
             sleep(800);
         }
-        sleep(400);
+        robot.spinIntake(1);
+        sleep(200);
+        robot.spinIntake(0);
+        robot.moveTrigger(true);
+        sleep(1000);
+        robot.moveTrigger(false);
         robot.moveGuard(false);
         robot.spinIntake(1);
         spinShooter=false;
-        robot.fireShooter(spinShooter,1);
+        robot.fireShooterDistance(spinShooter, 55);
+        Pose2d LP_P1 = new Pose2d(new Vector2d(-67,9),Math.toRadians(270));
 
         Actions.runBlocking(
 
 
-                drive.actionBuilder(Drive_from_start)
+                drive.actionBuilder(LP_P1)
 
-                        .strafeToLinearHeading(new Vector2d(-12,-15),Math.toRadians(270))
-                        .strafeToLinearHeading(new Vector2d(-12,-55),Math.toRadians(270))
-                        .strafeToLinearHeading(new Vector2d(-12,-40),Math.toRadians(270))
+                        .strafeToLinearHeading(new Vector2d(-12,15),Math.toRadians(90))
+                        .strafeToLinearHeading(new Vector2d(-12,55),Math.toRadians(90))
+                        .strafeToLinearHeading(new Vector2d(-12,40),Math.toRadians(90))
 
                         .build());
 
         robot.spinIntake(0);
-        Pose2d P1_LP = new Pose2d(new Vector2d(-12,-45),Math.toRadians(270));
+        Pose2d P1_LP = new Pose2d(new Vector2d(-12,40),Math.toRadians(90));
         camera.update();
         spinShooter = true;
-        robot.fireShooterDistance(spinShooter, camera.getCameraDistance());
+        robot.fireShooterDistance(spinShooter, 55);
         Actions.runBlocking(
                 drive.actionBuilder(P1_LP)
                         .setReversed(true)
-                        .splineToLinearHeading(new Pose2d(-23.50, -24.35, Math.toRadians(45.00)), Math.toRadians(45.00))
-                        .setReversed(false)
-                        .turnTo(Math.toRadians(45))
+                        .splineToLinearHeading(new Pose2d(-23.50, 24.35, Math.toRadians(315)), Math.toRadians(315))
                         .build()
         );
         robot.moveGuard(true);
         sleep(400);
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 2; i++) {
             robot.spinIntake(1);
             sleep(200);
             robot.spinIntake(0);
             sleep(800);
         }
-        sleep(400);
+        robot.spinIntake(1);
+        sleep(200);
+        robot.spinIntake(0);
+        robot.moveTrigger(true);
+        sleep(1000);
+        robot.moveTrigger(false);
         robot.moveGuard(false);
         robot.spinIntake(1);
         spinShooter=false;
-        robot.fireShooter(spinShooter,1);
-        Pose2d LP_P2 = new Pose2d(new Vector2d(-23.50,-24.35),Math.toRadians(45));
+        robot.fireShooterDistance(spinShooter, 55);
+        Pose2d LP_P2 = new Pose2d(new Vector2d(-23.50,24.35),Math.toRadians(45));
         Actions.runBlocking(
                 drive.actionBuilder(LP_P2)
-                        .strafeToLinearHeading(new Vector2d(12,-24.35),Math.toRadians(270))
-                        .strafeToConstantHeading(new Vector2d(12,-55))
+                        .strafeToLinearHeading(new Vector2d(12,24.35),Math.toRadians(90))
+                        .strafeToConstantHeading(new Vector2d(12,55))
                         .build()
 
         );
         robot.spinIntake(0);
-        Pose2d P2_LP = new Pose2d(new Vector2d(12,-45),Math.toRadians(270));
+        Pose2d P2_LP = new Pose2d(new Vector2d(12,45),Math.toRadians(90));
         camera.update();
         spinShooter = true;
         robot.fireShooterDistance(spinShooter, camera.getCameraDistance());
         Actions.runBlocking(
                 drive.actionBuilder(P2_LP)
-                        .strafeToLinearHeading(new Vector2d(12,-35),Math.toRadians(270))
+                        .strafeToLinearHeading(new Vector2d(12,35),Math.toRadians(90))
                         .setReversed(true)
-                        .splineToLinearHeading(new Pose2d(-23.50, -24.35, Math.toRadians(45.00)), Math.toRadians(45.00))
-                        .setReversed(false)
-                        .turnTo(Math.toRadians(45))
+                        .splineToLinearHeading(new Pose2d(-23.50, 24.35, Math.toRadians(315)), Math.toRadians(315))
+
+
 
                         .build()
         );
         robot.moveGuard(true);
         sleep(400);
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 2; i++) {
             robot.spinIntake(1);
-            sleep(200);
+            sleep(300);
             robot.spinIntake(0);
-            sleep(800);
+            sleep(1000);
         }
-        Pose2d LP_EP = new Pose2d(new Vector2d(-23.50,-24.35),Math.toRadians(10));
+        robot.spinIntake(1);
+        sleep(200);
+        robot.spinIntake(0);
+        robot.moveTrigger(true);
+        sleep(1000);
+        robot.moveTrigger(false);
+        Pose2d LP_EP = new Pose2d(new Vector2d(-23.50,24.35),Math.toRadians(315));
         Actions.runBlocking(
                 drive.actionBuilder(LP_EP)
-                        .strafeToLinearHeading(new Vector2d(-15,-24.35),Math.toRadians(10))
+                        .strafeToLinearHeading(new Vector2d(-10,24.35),Math.toRadians(350))
                         .build()
 
 

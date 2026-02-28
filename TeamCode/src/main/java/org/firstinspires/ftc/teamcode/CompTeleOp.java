@@ -71,9 +71,9 @@ public class CompTeleOp extends LinearOpMode {
             else if (gamepad2.dpad_down)
                 spinShooter = false;
 
-			if (gamepad2.dpad_left)
+			if (gamepad1.dpad_left)
 				camera.targetID = camera.BLUE_ID;
-			else if (gamepad2.dpad_right)
+			else if (gamepad1.dpad_right)
 				camera.targetID = camera.RED_ID;
 			telemetry.addData("April Tag Target ID", camera.targetID);
 

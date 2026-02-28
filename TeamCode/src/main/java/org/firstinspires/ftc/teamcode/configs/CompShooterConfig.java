@@ -8,7 +8,7 @@ public class CompShooterConfig extends ShooterConfig {
 	public static String intakeString = "Intake/RO";
 	public static String triggerString = "Trigger";
     public static String guardString = "Guard";
-	public static String greenLEDString = "redLED";
+	public static String greenLEDString = "cameraLED";
 
 	public static boolean shooterReversed = true;
 
@@ -20,9 +20,9 @@ public class CompShooterConfig extends ShooterConfig {
 	public static double[] shooterVoltages = {12.5, 12.5, 12.5};
 
 //	public static double speedOverDistance = 0.012228260869565;
-	public static double speedOverDistance = 0.020304568527919;
+	public static double speedOverDistance = 0.022;
 //	public static double speedIntercept = 9.372282608695652;
-	public static double speedIntercept = 5.719860406091371;
+	public static double speedIntercept = 5.44;
 	public static double testDistance = 40;
 
 	public double getSpeedOverDistance() {

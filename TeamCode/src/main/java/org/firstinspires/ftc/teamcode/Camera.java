@@ -19,7 +19,7 @@ public class Camera {
 	private HardwareMap hardwareMap;
 	private Telemetry telemetry;
 	Limelight3A limelight;
-	public DigitalChannel redLED;
+	public DigitalChannel cameraLED;
 
 	ElapsedTime runtime;
 
@@ -40,8 +40,9 @@ public class Camera {
 		telemetry = telem;
 		runtime = rt;
 
-		redLED = hardwareMap.get(DigitalChannel.class, CompShooterConfig.greenLEDString);
-		redLED.setMode(DigitalChannel.Mode.OUTPUT);
+		cameraLED = hardwareMap.get(DigitalChannel.class, CompShooterConfig.greenLEDString);
+		cameraLED.setMode(DigitalChannel.Mode.OUTPUT);
+        updateLED();
 
 		limelight = hardwareMap.get(Limelight3A.class, "limelight");
 		limelight.setPollRateHz(CameraConfig.pollRateHz);
@@ -78,12 +79,12 @@ public class Camera {
 
 				//Ensure we are only finding the tag we want
 				if (id == targetID) {
-					cameraDistance = fiducial.getRobotPoseTargetSpace().getPosition().z;
+					cameraDistance = -fiducial.getRobotPoseTargetSpace().getPosition().z * 39.37007874015748031496;
 					cameraAngle = fiducial.getTargetXDegrees();
 
 					targetFound = true;
 
-					telemetry.addData("Fiducial " + id, -cameraDistance * 39.37007874015748031496 + " inches away");
+					telemetry.addData("Fiducial " + id, cameraDistance + " inches away");
 					telemetry.addData("Fiducial " + id, cameraAngle + " degrees");
 				}
 			}
@@ -94,7 +95,7 @@ public class Camera {
 
 	public void updateLED() {
 		//The LED is active low, so set its value to false when we find a target
-		redLED.setState(!targetFound);
+		cameraLED.setState(!targetFound);
 	}
 
 	public double getTurnPower() {

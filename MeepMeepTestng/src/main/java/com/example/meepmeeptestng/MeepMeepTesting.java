@@ -15,14 +15,17 @@ public class MeepMeepTesting {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 13)
                 .build();
 
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(62, -6, Math.toRadians(0)))
-                .strafeToLinearHeading(new Vector2d(58,-6),Math.toRadians(10))
-                .strafeToLinearHeading(new Vector2d(36,-6),Math.toRadians(270))
-                .strafeToLinearHeading(new Vector2d(36,-45),Math.toRadians(270))
-                .splineToLinearHeading(new Pose2d(58, -6, Math.toRadians(10)), Math.toRadians(10))
-                .strafeToLinearHeading(new Vector2d(49,-6),Math.toRadians(270))
-                .strafeToLinearHeading(new Vector2d(49,-50),Math.toRadians(270))
-                .splineToLinearHeading(new Pose2d(58, -6, Math.toRadians(10.00)), Math.toRadians(10.00))
+        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(-67, 15, Math.toRadians(270)))
+                .strafeToLinearHeading(new Vector2d(-12,15),Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(-12,50),Math.toRadians(90))
+                .setReversed(true)
+                .splineToLinearHeading(new Pose2d(-23.50, 24.35, Math.toRadians(315)), Math.toRadians(315))
+                .strafeToLinearHeading(new Vector2d(12,24.35),Math.toRadians(90))
+                .strafeToConstantHeading(new Vector2d(12,50))
+                .setReversed(true)
+                .splineToLinearHeading(new Pose2d(-23.50, 24.35, Math.toRadians(315)), Math.toRadians(315))
+
+                .strafeToLinearHeading(new Vector2d(-15,24.35),Math.toRadians(350))
 
                 .build());
 
