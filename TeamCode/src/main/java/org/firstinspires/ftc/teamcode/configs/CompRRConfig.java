@@ -42,7 +42,7 @@ public class CompRRConfig extends RRConfig {
 
 	// drive model parameters
 	public static double inPerTick = 124.5 / 63287.0;
-	public static double lateralInPerTick = 96.52719045739337;
+	public static double lateralInPerTick = 0.001520712253780654;
 	public static double trackWidthTicks = 6016.977356143655;
 
 	public double[] getDriveModelParameters() {
@@ -67,7 +67,7 @@ public class CompRRConfig extends RRConfig {
 	}
 
 	// path profile parameters (in inches)
-	public static double maxWheelVel = 25;
+	public static double maxWheelVel = 50;
 	public static double minProfileAccel = -30;
 	public static double maxProfileAccel = 25;
 
@@ -92,11 +92,11 @@ public class CompRRConfig extends RRConfig {
 
 	// path controller gains
 	public static double axialGain = 5;
-	public static double lateralGain = 10;
+	public static double lateralGain = 5;
 	public static double headingGain = 5; // shared with turn
 
 	public static double axialVelGain = 2.0;
-	public static double lateralVelGain = 1;
+	public static double lateralVelGain = 1.0;
 	public static double headingVelGain = 1.0; // shared with turn
 
 	public double[] getPathControllerGains() {

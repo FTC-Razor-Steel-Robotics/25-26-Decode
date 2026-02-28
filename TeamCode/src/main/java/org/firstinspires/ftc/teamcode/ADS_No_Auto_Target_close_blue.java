@@ -2,26 +2,20 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
-import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.configs.CompShooterConfig;
 import org.firstinspires.ftc.teamcode.configs.PIDController;
 
-import java.util.List;
-
 
 @Autonomous(name="ADS_NAT_Blue_Close", group="Linear OpMode")
-public class ADS_No_Auto_Target extends LinearOpMode {
+public class ADS_No_Auto_Target_close_blue extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     CompBot robot;
     Limelight3A limelight;
@@ -38,7 +32,7 @@ public class ADS_No_Auto_Target extends LinearOpMode {
         limelight.start();
 
 
-        Pose2d Drive_from_start = new Pose2d(-67, -15, Math.toRadians(90));
+        Pose2d Drive_from_start = new Pose2d(62, -6, Math.toRadians(0));
         MecanumDrive drive = new MecanumDrive(hardwareMap,Drive_from_start);
 
         boolean spinShooter = false;
@@ -47,7 +41,12 @@ public class ADS_No_Auto_Target extends LinearOpMode {
         telemetry.update();
         waitForStart();
         spinShooter = true;
-        robot.fireShooter(spinShooter,1);
+        robot.fireShooter(spinShooter,2);
+        Actions.runBlocking(
+                drive.actionBuilder(Drive_from_start)
+                        .strafeToLinearHeading(new Vector2d(58,-6),Math.toRadians(10))
+                        .build());
+
         sleep(3000);
         robot.moveGuard(true);
         sleep(250);
@@ -61,14 +60,15 @@ public class ADS_No_Auto_Target extends LinearOpMode {
         robot.spinIntake(1);
         spinShooter=false;
         robot.fireShooter(spinShooter,1);
+        Pose2d LP_P1 = new Pose2d(new Vector2d(58,-6),Math.toRadians(10));
 
         Actions.runBlocking(
 
 
-                drive.actionBuilder(Drive_from_start)
+                drive.actionBuilder(LP_P1)
 
-                        .strafeToLinearHeading(new Vector2d(-12,-15),Math.toRadians(270))
-                        .strafeToLinearHeading(new Vector2d(-12,-47),Math.toRadians(270))
+                        .strafeToLinearHeading(new Vector2d(36,-6),Math.toRadians(270))
+                        .strafeToLinearHeading(new Vector2d(36,-45),Math.toRadians(270))
                         .build());
 
         robot.spinIntake(0);
@@ -77,7 +77,7 @@ public class ADS_No_Auto_Target extends LinearOpMode {
         robot.fireShooter(spinShooter,1);
         Actions.runBlocking(
                 drive.actionBuilder(P1_LP)
-                        .splineToLinearHeading(new Pose2d(-23.50, -24.35, Math.toRadians(45.00)), Math.toRadians(45.00))
+                        .splineToLinearHeading(new Pose2d(58, -6, Math.toRadians(10)), Math.toRadians(10))
                         .build()
         );
         robot.moveGuard(true);
@@ -95,8 +95,8 @@ public class ADS_No_Auto_Target extends LinearOpMode {
         Pose2d LP_P2 = new Pose2d(new Vector2d(-23.50,-24.35),Math.toRadians(45));
         Actions.runBlocking(
                 drive.actionBuilder(LP_P2)
-                        .strafeToLinearHeading(new Vector2d(12,-24.35),Math.toRadians(270))
-                        .strafeToConstantHeading(new Vector2d(12,-45))
+                        .strafeToLinearHeading(new Vector2d(49,-6),Math.toRadians(270))
+                        .strafeToLinearHeading(new Vector2d(49,-50),Math.toRadians(270))
                         .build()
 
         );
@@ -106,7 +106,7 @@ public class ADS_No_Auto_Target extends LinearOpMode {
         robot.fireShooter(spinShooter,1);
         Actions.runBlocking(
                 drive.actionBuilder(P2_LP)
-                        .splineToLinearHeading(new Pose2d(-23.50, -24.35, Math.toRadians(45.00)), Math.toRadians(45.00))
+                        .splineToLinearHeading(new Pose2d(58, -6, Math.toRadians(10.00)), Math.toRadians(10.00))
                         .build()
         );
         robot.moveGuard(true);
