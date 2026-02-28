@@ -18,6 +18,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous(name="ADS_BLUE_FRONT", group="Linear OpMode")
 @Config
+@Disabled
 public class ADS_BLUE_FRONT extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor Intake = null;

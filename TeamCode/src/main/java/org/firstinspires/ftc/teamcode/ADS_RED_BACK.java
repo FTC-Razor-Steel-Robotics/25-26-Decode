@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 @Autonomous(name="ADS_RED_BACK", group="Linear OpMode")
+@Disabled
 public class ADS_RED_BACK extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor Intake = null;

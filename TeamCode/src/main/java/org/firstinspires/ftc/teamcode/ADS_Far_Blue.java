@@ -47,7 +47,6 @@ public class ADS_Far_Blue extends LinearOpMode {
 //            camera.update();
 //            telemetry.update();
 //        }
-
 //        robot.fireShooterDistance(true, camera.getCameraDistance());
         robot.fireShooterDistance(true, 130);
         sleep(2500);
