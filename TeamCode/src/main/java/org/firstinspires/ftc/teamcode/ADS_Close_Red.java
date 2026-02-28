@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.configs.CompShooterConfig;
 import org.firstinspires.ftc.teamcode.configs.PIDController;
 
 
-@Autonomous(name="ADS_Red_close", group="Linear OpMode")
+@Autonomous(name="ADS_Close_Red", group="Linear OpMode")
 public class ADS_Close_Red extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     CompBot robot;
@@ -40,7 +40,7 @@ public class ADS_Close_Red extends LinearOpMode {
         waitForStart();
         camera.update();
         spinShooter = true;
-        robot.fireShooterDistance(spinShooter, 55);
+        robot.fireShooterDistance(spinShooter, 65);
         Actions.runBlocking(
                 drive.actionBuilder(Drive_from_start)
                         .strafeTo(new Vector2d(-67,9))
@@ -64,7 +64,7 @@ public class ADS_Close_Red extends LinearOpMode {
         robot.moveGuard(false);
         robot.spinIntake(1);
         spinShooter=false;
-        robot.fireShooterDistance(spinShooter, 55);
+        robot.fireShooterDistance(spinShooter, 65);
         Pose2d LP_P1 = new Pose2d(new Vector2d(-67,9),Math.toRadians(270));
 
         Actions.runBlocking(
@@ -82,7 +82,7 @@ public class ADS_Close_Red extends LinearOpMode {
         Pose2d P1_LP = new Pose2d(new Vector2d(-12,40),Math.toRadians(90));
         camera.update();
         spinShooter = true;
-        robot.fireShooterDistance(spinShooter, 55);
+        robot.fireShooterDistance(spinShooter, 65);
         Actions.runBlocking(
                 drive.actionBuilder(P1_LP)
                         .setReversed(true)
@@ -106,7 +106,7 @@ public class ADS_Close_Red extends LinearOpMode {
         robot.moveGuard(false);
         robot.spinIntake(1);
         spinShooter=false;
-        robot.fireShooterDistance(spinShooter, 55);
+        robot.fireShooterDistance(spinShooter, 65);
         Pose2d LP_P2 = new Pose2d(new Vector2d(-23.50,24.35),Math.toRadians(45));
         Actions.runBlocking(
                 drive.actionBuilder(LP_P2)
@@ -116,10 +116,11 @@ public class ADS_Close_Red extends LinearOpMode {
 
         );
         robot.spinIntake(0);
+        /*
         Pose2d P2_LP = new Pose2d(new Vector2d(12,45),Math.toRadians(90));
         camera.update();
         spinShooter = true;
-        robot.fireShooterDistance(spinShooter, camera.getCameraDistance());
+        robot.fireShooterDistance(spinShooter, 65);
         Actions.runBlocking(
                 drive.actionBuilder(P2_LP)
                         .strafeToLinearHeading(new Vector2d(12,35),Math.toRadians(90))
@@ -153,6 +154,8 @@ public class ADS_Close_Red extends LinearOpMode {
 
         );
 
+
+         */
 
 
 

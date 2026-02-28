@@ -51,7 +51,7 @@ public class CompShooterConfig extends ShooterConfig {
 		return shooterVoltages;
 	}
 
-	public static double kP = 0.03;
-	public static double kI = 0;
+	public static double kP = 0.02;
+	public static double kI = 0.000005;
 	public static double kD = 0.3;
 }

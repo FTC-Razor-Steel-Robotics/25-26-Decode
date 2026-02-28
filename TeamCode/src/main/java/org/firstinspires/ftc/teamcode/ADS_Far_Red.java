@@ -5,7 +5,6 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -14,8 +13,8 @@ import org.firstinspires.ftc.teamcode.configs.CompShooterConfig;
 import org.firstinspires.ftc.teamcode.configs.PIDController;
 
 
-@Autonomous(name="ADS_Far_Blue", group="Linear OpMode")
-public class ADS_Far_Blue extends LinearOpMode {
+@Autonomous(name="ADS_Far_Red", group="Linear OpMode")
+public class ADS_Far_Red extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     CompBot robot;
     Camera camera;
@@ -27,9 +26,9 @@ public class ADS_Far_Blue extends LinearOpMode {
 
         robot = new CompBot(hardwareMap, telemetry);
         camera = new Camera(hardwareMap, telemetry, runtime);
-        camera.targetID = camera.BLUE_ID;
+        camera.targetID = camera.RED_ID;
 
-        Pose2d Drive_from_start = new Pose2d(62, -6, Math.toRadians(0));
+        Pose2d Drive_from_start = new Pose2d(62, 6, Math.toRadians(0));
         MecanumDrive drive = new MecanumDrive(hardwareMap,Drive_from_start);
 
         boolean spinShooter = false;
@@ -40,7 +39,7 @@ public class ADS_Far_Blue extends LinearOpMode {
 
         Actions.runBlocking(
                 drive.actionBuilder(Drive_from_start)
-                        .strafeToLinearHeading(new Vector2d(58,-6),Math.toRadians(25))
+                        .strafeToLinearHeading(new Vector2d(58,6),Math.toRadians(-25))
                         .build());
 
 //        for (int i = 0; i < 1000; i++) {
@@ -68,13 +67,13 @@ public class ADS_Far_Blue extends LinearOpMode {
         robot.spinIntake(1);
         spinShooter=false;
         robot.fireShooterDistance(false,0);
-        Pose2d LP_P1 = new Pose2d(new Vector2d(58,-6),Math.toRadians(25));
+        Pose2d LP_P1 = new Pose2d(new Vector2d(58,6),Math.toRadians(-25));
 
         Actions.runBlocking(
 
 
                 drive.actionBuilder(LP_P1)
-                        .strafeToLinearHeading(new Vector2d(58,-50),Math.toRadians(0))
+                        .strafeToLinearHeading(new Vector2d(58,50),Math.toRadians(0))
                         .build());
         /*
         robot.spinIntake(0);
