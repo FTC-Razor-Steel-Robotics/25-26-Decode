@@ -50,12 +50,12 @@ public class ADS_No_Auto_Target extends LinearOpMode {
         robot.fireShooter(spinShooter,1);
         sleep(3000);
         robot.moveGuard(true);
-        sleep(250);
+        sleep(400);
         for (int i = 0; i < 3; i++) {
             robot.spinIntake(1);
             sleep(200);
             robot.spinIntake(0);
-            sleep(550);
+            sleep(700);
         }
         robot.moveGuard(false);
         robot.spinIntake(1);
@@ -68,7 +68,7 @@ public class ADS_No_Auto_Target extends LinearOpMode {
                 drive.actionBuilder(Drive_from_start)
 
                         .strafeToLinearHeading(new Vector2d(-12,-15),Math.toRadians(270))
-                        .strafeToLinearHeading(new Vector2d(-12,-47),Math.toRadians(270))
+                        .strafeToLinearHeading(new Vector2d(-12,-50),Math.toRadians(270))
                         .build());
 
         robot.spinIntake(0);
@@ -81,12 +81,12 @@ public class ADS_No_Auto_Target extends LinearOpMode {
                         .build()
         );
         robot.moveGuard(true);
-        sleep(250);
+        sleep(400);
         for (int i = 0; i < 3; i++) {
             robot.spinIntake(1);
             sleep(200);
             robot.spinIntake(0);
-            sleep(550);
+            sleep(700);
         }
         robot.moveGuard(false);
         robot.spinIntake(1);
@@ -96,7 +96,7 @@ public class ADS_No_Auto_Target extends LinearOpMode {
         Actions.runBlocking(
                 drive.actionBuilder(LP_P2)
                         .strafeToLinearHeading(new Vector2d(12,-24.35),Math.toRadians(270))
-                        .strafeToConstantHeading(new Vector2d(12,-45))
+                        .strafeToConstantHeading(new Vector2d(12,-50))
                         .build()
 
         );
@@ -110,12 +110,22 @@ public class ADS_No_Auto_Target extends LinearOpMode {
                         .build()
         );
         robot.moveGuard(true);
+        sleep(400);
         for (int i = 0; i < 3; i++) {
             robot.spinIntake(1);
             sleep(200);
             robot.spinIntake(0);
-            sleep(550);
+            sleep(270);
         }
+        Pose2d LP_EP = new Pose2d(new Vector2d(-23.50,-24.35),Math.toRadians(10));
+        Actions.runBlocking(
+                drive.actionBuilder(LP_EP)
+                        .strafeToLinearHeading(new Vector2d(-15,-24.35),Math.toRadians(10))
+                        .build()
+
+
+        );
+
 
 
 
