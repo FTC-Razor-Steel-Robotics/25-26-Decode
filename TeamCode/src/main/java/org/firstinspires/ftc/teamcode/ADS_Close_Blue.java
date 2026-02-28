@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.configs.PIDController;
 import java.util.List;
 
 
-@Autonomous(name="ADS_NAT_Blue_Close", group="Linear OpMode")
+@Autonomous(name="ADS_NAT_Blue_Far", group="Linear OpMode")
 public class ADS_No_Auto_Target extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     CompBot robot;
